@@ -3,20 +3,20 @@ project:
   output-dir: docs
 
 website:
-  title: "rymooney.github.io"
+  title: "Ryan Mooney"
   navbar:
     left:
       - href: index.qmd
         text: Home
       - about.qmd
+      - Data Viz.qmd
 
 format:
   html:
-    theme:
-      - cosmo
-      - brand
+    theme: brite
     css: styles.css
     toc: true
+    page-layout: full
 
 editor: visual
 
