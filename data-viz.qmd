@@ -1,0 +1,6 @@
+---
+title: "data viz"
+format: html
+---
+
+This is my data visualization page, where I upload my data visualizations done on TidyTuesday data. 
