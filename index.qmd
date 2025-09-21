@@ -7,12 +7,16 @@ about:
    image-shape: rounded
    image-width: 20em
    links:
-    - text: LinkedIn
+    - icon: linkedin
+      text: LinkedIn
       href: https://www.linkedin.com/in/ryanmooney1
-    - text: GitHub
+    - icon: github
+      text: GitHub
       href: https://github.com/rymooney
-    - text: Email
+    - icon: envelope
+      text: Email
       href: mailto:rmmj2023@mymail.pomona.edu
+
 ---
 
 
