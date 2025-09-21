@@ -19,7 +19,7 @@ website:
 
 format:
   html:
-    theme: brite
+    theme: trestles
     css: styles.css
     toc: true
     page-layout: full
