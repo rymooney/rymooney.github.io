@@ -1,0 +1,10 @@
+---
+title: "UNESCO"
+format: html
+---
+
+```{r}
+unesco <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2024/2024-02-06/heritage.csv')
+
+```
+
