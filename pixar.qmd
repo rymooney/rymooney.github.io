@@ -1,0 +1,37 @@
+---
+title: "pixar"
+format: html
+---
+
+```{r}
+#| message: false
+#| warning: false
+library(tidyverse)
+```
+
+# The Data
+Let's explore a data set about the ratings of pixar films Pixar films; the data here is from the {pixarfilms} R package by [Eric Leung](https://github.com/erictleung).
+
+```{r}
+#| message: false
+#| warning: false
+pixar_ratings <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-03-11/public_response.csv')
+```
+
+# Let's plot it!
+
+```{r}
+#| message: false
+#| warning: false
+ggplot(pixar_ratings, aes(x=film, y=rotten_tomatoes)) +
+  geom_point() +
+  labs(
+    title = "Pixar film ratings",
+    x = "Film name",
+    y = "Rating by Rotten Tomatoes"
+  ) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+```
+
