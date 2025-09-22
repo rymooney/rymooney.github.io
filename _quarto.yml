@@ -10,8 +10,11 @@ website:
         text: Home
       - href: about.qmd
         text: About
-      - href: data-viz.qmd
-        text: Data Viz
+      - text: Data Viz
+        menu: 
+          - text: "UNESCO World Heritage Sites"
+            href: UNESCO.qmd
+
   page-footer: 
     background: light 
     right: This website is built with {{< fa heart title="a heart" >}}, [{{< fa brands github title="GitHub octocat logo" >}}](https://https://github.com/rymooney/rymooney.github.io){target=_blank}, [{{< fa brands r-project title="R Project" >}}](https://www.r-project.org/about.html){target=_blank} and [Quarto](https://quarto.org/){target=_blank}
@@ -19,7 +22,7 @@ website:
 
 format:
   html:
-    theme: brite
+    theme: trestles
     css: styles.css
     toc: true
     page-layout: full
