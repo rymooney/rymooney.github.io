@@ -23,15 +23,27 @@ pixar_ratings <- readr::read_csv('https://raw.githubusercontent.com/rfordatascie
 ```{r}
 #| message: false
 #| warning: false
-ggplot(pixar_ratings, aes(x=film, y=rotten_tomatoes)) +
-  geom_point() +
+
+pixar_ratings_long <- pixar_ratings |>
+  pivot_longer(
+    cols = c(rotten_tomatoes, metacritic, critics_choice),
+    names_to = "rating_source",
+    values_to = "score"
+  )|>
+  filter(!is.na(score)) 
+
+ggplot(pixar_ratings_long, aes(x = film, y = score, color = rating_source)) +
+  geom_point(size = 3) +
+  geom_line(aes(group = rating_source)) +
   labs(
-    title = "Pixar film ratings",
-    x = "Film name",
-    y = "Rating by Rotten Tomatoes"
+    title = "Pixar Movie Ratings",
+    x = "Film",
+    y = "Score",
+    color = "Rating Source"
   ) +
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1)
   )
+  
 ```
 

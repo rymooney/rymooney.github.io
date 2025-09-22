@@ -11,7 +11,7 @@
     "href": "pixar.html",
     "title": "pixar",
     "section": "",
-    "text": "library(tidyverse)\n\n\nThe Data\nLet’s explore a data set about the ratings of pixar films Pixar films; the data here is from the {pixarfilms} R package by Eric Leung.\n\npixar_ratings &lt;- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-03-11/public_response.csv')\n\n\n\nLet’s plot it!\n\nggplot(pixar_ratings, aes(x=film, y=rotten_tomatoes)) +\n  geom_point() +\n  labs(\n    title = \"Pixar film ratings\",\n    x = \"Film name\",\n    y = \"Rating by Rotten Tomatoes\"\n  ) +\n  theme(\n    axis.text.x = element_text(angle = 45, hjust = 1)\n  )"
+    "text": "library(tidyverse)\n\n\nThe Data\nLet’s explore a data set about the ratings of pixar films Pixar films; the data here is from the {pixarfilms} R package by Eric Leung.\n\npixar_ratings &lt;- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-03-11/public_response.csv')\n\n\n\nLet’s plot it!\n\npixar_ratings_long &lt;- pixar_ratings |&gt;\n  pivot_longer(\n    cols = c(rotten_tomatoes, metacritic, critics_choice),\n    names_to = \"rating_source\",\n    values_to = \"score\"\n  )|&gt;\n  filter(!is.na(score)) \n\nggplot(pixar_ratings_long, aes(x = film, y = score, color = rating_source)) +\n  geom_point(size = 3) +\n  geom_line(aes(group = rating_source)) +\n  labs(\n    title = \"Pixar Movie Ratings\",\n    x = \"Film\",\n    y = \"Score\",\n    color = \"Rating Source\"\n  ) +\n  theme(\n    axis.text.x = element_text(angle = 45, hjust = 1)\n  )"
   },
   {
     "objectID": "UNESCO.html",
