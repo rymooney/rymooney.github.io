@@ -10,7 +10,8 @@ library(tidyverse)
 ```
 
 # The Data
-Let's explore a data set about the ratings of pixar films Pixar films; the data here is from the {pixarfilms} R package by [Eric Leung](https://github.com/erictleung).
+
+Let's explore a data set about the ratings of pixar films Pixar films; the data here is from the [TidyTuesday](https://github.com/rfordatascience/tidytuesday/tree/main/data/2025/2025-03-11) repo and the original data is from [Wikipedia](https://en.wikipedia.org/wiki/List_of_Pixar_films).
 
 ```{r}
 #| message: false
@@ -46,4 +47,3 @@ ggplot(pixar_ratings_long, aes(x = film, y = score, color = rating_source)) +
   )
   
 ```
-
