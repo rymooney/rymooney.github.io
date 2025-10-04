@@ -1,0 +1,36 @@
+---
+title: "Text Analysis"
+format: html
+---
+
+Today, I will be practicing my text analysis using str\_\*() commands, regular expressions, and plotting character-based data! To do this, I will be analyzing character data from all of Emily Dickinson's Poems!
+
+Some of the packages I will need:
+
+```{r}
+#| message: false
+#| warning: false
+library(tidyverse) 
+```
+
+The original data is from [Gutenburg](https://www.gutenberg.org/files/12242/12242-h/12242-h.htm) and has been compiled
+
+```{r}
+#| message: false
+#| warning: false
+devtools::install_github("Amherst-Statistics/DickinsonPoems")
+```
+
+These are the first six files contained in the DickinsonPoems repo, each containing one poem:
+
+```{r}
+list.files(system.file("extdata", package = "DickinsonPoems"))[1:6]
+```
+
+For example, here is one of the poems:
+
+```{r}
+poem166 <- paste(system.file("extdata", package = "DickinsonPoems"), 
+                  "gutenberg3.txt166", sep = "/")
+readLines(poem166)
+```
