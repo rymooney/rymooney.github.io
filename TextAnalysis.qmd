@@ -13,23 +13,17 @@ Some of the packages I will need:
 library(tidyverse) 
 ```
 
-The original data is from [Gutenburg](https://www.gutenberg.org/files/12242/12242-h/12242-h.htm) and has been compiled
+The original data is from [Gutenburg](https://www.gutenberg.org/files/12242/12242-h/12242-h.htm) and has been compiled by [Amherst Statistics](https://github.com/Amherst-Statistics/DickinsonPoems).
+
+*Accessing the data, printing some of the contents, and reading a poem!*
 
 ```{r}
 #| message: false
 #| warning: false
 devtools::install_github("Amherst-Statistics/DickinsonPoems")
-```
 
-These are the first six files contained in the DickinsonPoems repo, each containing one poem:
+head(list.files(system.file("extdata", package = "DickinsonPoems"))) # first six files in the repo
 
-```{r}
-list.files(system.file("extdata", package = "DickinsonPoems"))[1:6]
-```
-
-For example, here is one of the poems:
-
-```{r}
 poem166 <- paste(system.file("extdata", package = "DickinsonPoems"), 
                   "gutenberg3.txt166", sep = "/")
 readLines(poem166)
