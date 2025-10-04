@@ -16,6 +16,8 @@ website:
             href: UNESCO.qmd
           - text: "Pixar Ratings"
             href: pixar.qmd
+      - href: TextAnalysis.qmd
+        text: Text Analysis
             
   page-footer: 
     background: light 

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Data Viz – Ryan Mooney</title>
+<title>Text Analysis – Ryan Mooney</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -118,7 +153,7 @@ ul.task-list li input[type="checkbox"] {
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="./TextAnalysis.html"> 
+    <a class="nav-link active" href="./TextAnalysis.html" aria-current="page"> 
 <span class="menu-text">Text Analysis</span></a>
   </li>  
 </ul>
@@ -140,7 +175,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Data Viz</h1>
+<h1 class="title">Text Analysis</h1>
 </div>
 
 
@@ -157,7 +192,69 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>This is my data visualization page, where I upload my data visualizations done on TidyTuesday data.</p>
+<p>Today, I will be practicing my text analysis using str_*() commands, regular expressions, and plotting character-based data! To do this, I will be analyzing character data from all of Emily Dickinson’s Poems!</p>
+<p>Some of the packages I will need:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The original data is from <a href="https://www.gutenberg.org/files/12242/12242-h/12242-h.htm">Gutenburg</a> and has been compiled by <a href="https://github.com/Amherst-Statistics/DickinsonPoems">Amherst Statistics</a>.</p>
+<p><em>Accessing the data, printing some of the contents, and reading a poem!</em></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"Amherst-Statistics/DickinsonPoems"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">list.files</span>(<span class="fu">system.file</span>(<span class="st">"extdata"</span>, <span class="at">package =</span> <span class="st">"DickinsonPoems"</span>))) <span class="co"># first six files in the repo</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "gutenberg1.txt001" "gutenberg1.txt002" "gutenberg1.txt003"
+[4] "gutenberg1.txt004" "gutenberg1.txt005" "gutenberg1.txt006"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>poem166 <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">system.file</span>(<span class="st">"extdata"</span>, <span class="at">package =</span> <span class="st">"DickinsonPoems"</span>), </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                  <span class="st">"gutenberg3.txt166"</span>, <span class="at">sep =</span> <span class="st">"/"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">readLines</span>(poem166)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "XX. "                                      
+ [2] " "                                         
+ [3] "OLD-FASHIONED. "                           
+ [4] " "                                         
+ [5] "Arcturus is his other name, -- "           
+ [6] "I'd rather call him star! "                
+ [7] "It's so unkind of science "                
+ [8] "To go and interfere! "                     
+ [9] " "                                         
+[10] "I pull a flower from the woods, -- "       
+[11] "A monster with a glass "                   
+[12] "Computes the stamens in a breath, "        
+[13] "And has her in a class. "                  
+[14] " "                                         
+[15] "Whereas I took the butterfly "             
+[16] "Aforetime in my hat, "                     
+[17] "He sits erect in cabinets, "               
+[18] "The clover-bells forgot. "                 
+[19] " "                                         
+[20] "What once was heaven, is zenith now. "     
+[21] "Where I proposed to go "                   
+[22] "When time's brief masquerade was done, "   
+[23] "Is mapped, and charted too! "              
+[24] " "                                         
+[25] "What if the poles should frisk about "     
+[26] "And stand upon their heads! "              
+[27] "I hope I 'm ready for the worst, "         
+[28] "Whatever prank betides! "                  
+[29] " "                                         
+[30] "Perhaps the kingdom of Heaven 's changed! "
+[31] "I hope the children there "                
+[32] "Won't be new-fashioned when I come, "      
+[33] "And laugh at me, and stare! "              
+[34] " "                                         
+[35] "I hope the father in the skies "           
+[36] "Will lift his little girl, -- "            
+[37] "Old-fashioned, naughty, everything, -- "   
+[38] "Over the stile of pearl! "                 
+[39] " "                                         
+[40] " "                                         
+[41] " "                                         
+[42] " "                                         </code></pre>
+</div>
+</div>
 
 
 
