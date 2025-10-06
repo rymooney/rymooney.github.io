@@ -194,3 +194,32 @@ day_night_both |>
   ) 
 ```
 
+
+------------------------------------------------------------------------------
+
+Today, I will be practicing my text analysis using str\_\*() commands, regular expressions, and plotting character-based data! To do this, I will be analyzing character data from all of The New York Times' headlines!
+
+The data is sample dataset containing headlines from [The New York Times](https://www.nytimes.com/), compiled by Professor Amber E. Boydstun at the University of California, Davis. The dataset can be accessed in the [RTextTools](https://www.rdocumentation.org/packages/RTextTools/versions/1.4.3/topics/NYTimes) library on R from the RTextTools package. 
+
+```{r}
+library(RTextTools) 
+data(NYTimes)
+as_tibble(NYTimes)
+```
+The libraries I will need:
+
+```{r}
+#| message: false
+#| warning: false
+library(tidyverse) 
+library(ggrepel)
+library(stringr)
+```
+
+First, I am interested in the most common word that appears in The New York Times' headlines.
+```{r}
+
+```
+```
+
+

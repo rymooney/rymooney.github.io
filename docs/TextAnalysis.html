@@ -518,6 +518,41 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+<hr>
+<p>Today, I will be practicing my text analysis using str_*() commands, regular expressions, and plotting character-based data! To do this, I will be analyzing character data from all of The New York Times’ headlines!</p>
+<p>The data is sample dataset containing headlines from <a href="https://www.nytimes.com/">The New York Times</a>, compiled by Professor Amber E. Boydstun at the University of California, Davis. The dataset can be accessed in the <a href="https://www.rdocumentation.org/packages/RTextTools/versions/1.4.3/topics/NYTimes">RTextTools</a> library on R from the RTextTools package.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RTextTools) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: SparseM</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(NYTimes)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">as_tibble</span>(NYTimes)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3,104 × 5
+   Article_ID Date      Title                                 Subject Topic.Code
+        &lt;int&gt; &lt;fct&gt;     &lt;fct&gt;                                 &lt;fct&gt;        &lt;int&gt;
+ 1      41246 1-Jan-96  Nation's Smaller Jails Struggle To C… Jails …         12
+ 2      41257 2-Jan-96  FEDERAL IMPASSE SADDLING STATES WITH… Federa…         20
+ 3      41268 3-Jan-96  Long, Costly Prelude Does Little To … Conten…         20
+ 4      41279 4-Jan-96  Top Leader of the Bosnian Serbs Now … Bosnia…         19
+ 5      41290 5-Jan-96  BATTLE OVER THE BUDGET: THE OVERVIEW… Battle…          1
+ 6      41302 7-Jan-96  South African Democracy Stumbles on … politi…         19
+ 7      41314 8-Jan-96  Among Economists, Little Fear on Def… econom…          1
+ 8      41333 10-Jan-96 BATTLE OVER THE BUDGET: THE OVERVIEW… budget…          1
+ 9      41344 11-Jan-96 High Court Is Cool To Census Change   census…         20
+10      41355 12-Jan-96 TURMOIL AT BARNEYS: THE DIFFICULTIES… barney…         15
+# ℹ 3,094 more rows</code></pre>
+</div>
+</div>
+<p>The libraries I will need:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) </span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggrepel)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>First, I am interested in the most common word that appears in The New York Times’ headlines.</p>
+<p>```</p>
 
 
 
