@@ -107,6 +107,8 @@ So, Bush was mentioned more than Clinton in this dataset from the years 1996 to 
 Finally, I am interested to see how the timing of the mentions of each of these presidents compares and if I can pull out historical dates from the peaks in the following plot. 
 
 ```{r}
+#| message: false
+#| warning: false
 presidents_mentioned <- NYTimes |>
   mutate(Title_lower = str_to_lower(Title)) |>
   mutate(date = dmy(Date)) |>
@@ -117,7 +119,7 @@ presidents_mentioned <- NYTimes |>
       str_detect(Title_lower, "\\bbush(?!\\s*fires?)\\b"),
       "Bush", "Clinton")) |>
   group_by(year, president) |>
-  summarize(n = n())
+  summarize(n = n(), .groups = "drop")
 
 ggplot(presidents_mentioned, aes(x = year, y = n, color = president)) +
   geom_line() +
