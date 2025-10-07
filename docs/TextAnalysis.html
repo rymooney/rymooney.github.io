@@ -143,12 +143,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-data-viz">    
         <li>
-    <a class="dropdown-item" href="./UNESCO.html">
- <span class="dropdown-text">UNESCO World Heritage Sites</span></a>
-  </li>  
-        <li>
     <a class="dropdown-item" href="./pixar.html">
  <span class="dropdown-text">Pixar Ratings</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./UNESCO.html">
+ <span class="dropdown-text">UNESCO World Heritage Sites</span></a>
   </li>  
     </ul>
   </li>
@@ -167,11 +167,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-task" id="toc-the-task" class="nav-link active" data-scroll-target="#the-task">The Task</a></li>
+  <li><a href="#the-data" id="toc-the-data" class="nav-link" data-scroll-target="#the-data">The Data</a></li>
+  <li><a href="#lets-analyze" id="toc-lets-analyze" class="nav-link" data-scroll-target="#lets-analyze">Let’s analyze!</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page" id="quarto-document-content">
+<main class="content column-page-left" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -180,7 +188,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<div class="quarto-title-meta column-page">
+<div class="quarto-title-meta column-page-left">
 
     
   
@@ -192,180 +200,183 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Today, I will be practicing my text analysis using str_*() commands, regular expressions, and plotting character-based data! To do this, I will be analyzing character data from all of Emily Dickinson’s Poems!</p>
-<p>Some of the packages I will need:</p>
+<section id="the-task" class="level1">
+<h1>The Task</h1>
+<p>Today, I will be practicing my text analysis using <strong>str_*()</strong> commands, <strong>regular expressions</strong>, and plotting character-based data! To do this, I will be analyzing character data from all of <em>The New York Times’</em> headlines from years 1996-2006.</p>
+</section>
+<section id="the-data" class="level1">
+<h1>The Data</h1>
+<p>The data is sample dataset containing headlines from <a href="https://www.nytimes.com/">The New York Times</a>, compiled by Professor Amber E. Boydstun at the University of California, Davis. The dataset can be accessed in the <a href="https://www.rdocumentation.org/packages/RTextTools/versions/1.4.3/topics/NYTimes">RTextTools</a> library on R from the RTextTools package. The data is in the library in a data frame called NYTimes.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) </span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggrepel)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>The original data is from <a href="https://www.gutenberg.org/files/12242/12242-h/12242-h.htm">Gutenburg</a> and is on the GitHub repo of <a href="https://github.com/Amherst-Statistics/DickinsonPoems">Amherst-Statistics</a>.</p>
-<p><em>Accessing the data, printing some of the contents, and reading a poem!</em></p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"Amherst-Statistics/DickinsonPoems"</span>) <span class="co"># this command was taken from the Amherst-Statistics repo linked above.</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>files_Dickinson <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">"extdata"</span>, <span class="at">package =</span> <span class="st">"DickinsonPoems"</span>) <span class="co"># this command was taken from the Amherst-Statistics repo linked above.</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">list.files</span>((files_Dickinson))) <span class="co"># first six files in the repo</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RTextTools) </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(NYTimes)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">as_tibble</span>(NYTimes)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "gutenberg1.txt001" "gutenberg1.txt002" "gutenberg1.txt003"
-[4] "gutenberg1.txt004" "gutenberg1.txt005" "gutenberg1.txt006"</code></pre>
+<pre><code># A tibble: 3,104 × 5
+   Article_ID Date      Title                                 Subject Topic.Code
+        &lt;int&gt; &lt;fct&gt;     &lt;fct&gt;                                 &lt;fct&gt;        &lt;int&gt;
+ 1      41246 1-Jan-96  Nation's Smaller Jails Struggle To C… Jails …         12
+ 2      41257 2-Jan-96  FEDERAL IMPASSE SADDLING STATES WITH… Federa…         20
+ 3      41268 3-Jan-96  Long, Costly Prelude Does Little To … Conten…         20
+ 4      41279 4-Jan-96  Top Leader of the Bosnian Serbs Now … Bosnia…         19
+ 5      41290 5-Jan-96  BATTLE OVER THE BUDGET: THE OVERVIEW… Battle…          1
+ 6      41302 7-Jan-96  South African Democracy Stumbles on … politi…         19
+ 7      41314 8-Jan-96  Among Economists, Little Fear on Def… econom…          1
+ 8      41333 10-Jan-96 BATTLE OVER THE BUDGET: THE OVERVIEW… budget…          1
+ 9      41344 11-Jan-96 High Court Is Cool To Census Change   census…         20
+10      41355 12-Jan-96 TURMOIL AT BARNEYS: THE DIFFICULTIES… barney…         15
+# ℹ 3,094 more rows</code></pre>
 </div>
 </div>
+<p>The libraries I will need:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>poem166 <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">system.file</span>(<span class="st">"extdata"</span>, <span class="at">package =</span> <span class="st">"DickinsonPoems"</span>), </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                  <span class="st">"gutenberg3.txt166"</span>, <span class="at">sep =</span> <span class="st">"/"</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">readLines</span>(poem166) <span class="co"># this command was taken from the Amherst-Statistics repo linked above.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggrepel)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="lets-analyze" class="level1">
+<h1>Let’s analyze!</h1>
+<p>Let’s see what years the dataset has.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>NYTimes_dates <span class="ot">&lt;-</span> NYTimes <span class="sc">|&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date_as_dmy =</span> <span class="fu">dmy</span>(Date)) <span class="sc">|&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">earliestdate =</span> <span class="fu">min</span>(date_as_dmy, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">latestdate   =</span> <span class="fu">max</span>(date_as_dmy, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>NYTimes_dates</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] "XX. "                                      
- [2] " "                                         
- [3] "OLD-FASHIONED. "                           
- [4] " "                                         
- [5] "Arcturus is his other name, -- "           
- [6] "I'd rather call him star! "                
- [7] "It's so unkind of science "                
- [8] "To go and interfere! "                     
- [9] " "                                         
-[10] "I pull a flower from the woods, -- "       
-[11] "A monster with a glass "                   
-[12] "Computes the stamens in a breath, "        
-[13] "And has her in a class. "                  
-[14] " "                                         
-[15] "Whereas I took the butterfly "             
-[16] "Aforetime in my hat, "                     
-[17] "He sits erect in cabinets, "               
-[18] "The clover-bells forgot. "                 
-[19] " "                                         
-[20] "What once was heaven, is zenith now. "     
-[21] "Where I proposed to go "                   
-[22] "When time's brief masquerade was done, "   
-[23] "Is mapped, and charted too! "              
-[24] " "                                         
-[25] "What if the poles should frisk about "     
-[26] "And stand upon their heads! "              
-[27] "I hope I 'm ready for the worst, "         
-[28] "Whatever prank betides! "                  
-[29] " "                                         
-[30] "Perhaps the kingdom of Heaven 's changed! "
-[31] "I hope the children there "                
-[32] "Won't be new-fashioned when I come, "      
-[33] "And laugh at me, and stare! "              
-[34] " "                                         
-[35] "I hope the father in the skies "           
-[36] "Will lift his little girl, -- "            
-[37] "Old-fashioned, naughty, everything, -- "   
-[38] "Over the stile of pearl! "                 
-[39] " "                                         
-[40] " "                                         
-[41] " "                                         
-[42] " "                                         </code></pre>
+<pre><code>  earliestdate latestdate
+1   1996-01-01 2006-12-31</code></pre>
 </div>
 </div>
-<p>For future analyses, I will need a data frame, which will have one column as the identifier of the poem and the second column containing the text of that poem.</p>
+<p>First, I am interested in the most common word that appears in The New York Times’ headlines. I will look for words that are 3 characters or longer to avoid single letters and short words like “a” or “an”.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>files <span class="ot">&lt;-</span> <span class="fu">list.files</span>(files_Dickinson, <span class="at">pattern =</span> <span class="st">"^gutenberg.*</span><span class="sc">\\</span><span class="st">.txt</span><span class="sc">\\</span><span class="st">d+$"</span>, <span class="at">full.names =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>poems_dataframe <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="fu">basename</span>(files),</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">text  =</span> <span class="fu">map_chr</span>(files, <span class="sc">~</span> <span class="fu">paste</span>(<span class="fu">readLines</span>(.x, <span class="at">warn =</span> <span class="cn">FALSE</span>), <span class="at">collapse =</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>))</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(poems_dataframe)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>word_counts <span class="ot">&lt;-</span> NYTimes <span class="sc">|&gt;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Title_lower =</span> <span class="fu">str_to_lower</span>(Title))<span class="sc">|&gt;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">words =</span> <span class="fu">str_extract_all</span>(Title_lower, <span class="st">"</span><span class="sc">\\</span><span class="st">b[a-z]{3,}</span><span class="sc">\\</span><span class="st">b"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(words) <span class="sc">|&gt;</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(words, <span class="at">sort =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>word_counts</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 2
-  title             text                                                        
-  &lt;chr&gt;             &lt;chr&gt;                                                       
-1 gutenberg1.txt001 "I. \n \nSUCCESS. \n \n[Published in \"A Masque of Poets\" …
-2 gutenberg1.txt002 "II. \n \nOur share of night to bear, \nOur share of mornin…
-3 gutenberg1.txt003 "III. \n \nROUGE ET NOIR. \n \nSoul, wilt thou toss again? …
-4 gutenberg1.txt004 "IV. \n \nROUGE GAGNE. \n \n'T is so much joy! 'T is so muc…
-5 gutenberg1.txt005 "V. \n \nGlee! The great storm is over! \nFour have recover…
-6 gutenberg1.txt006 "VI. \n \nIf I can stop one heart from breaking, \nI shall …</code></pre>
+<pre><code># A tibble: 5,906 × 2
+   words        n
+   &lt;chr&gt;    &lt;int&gt;
+ 1 the        866
+ 2 for        420
+ 3 and        312
+ 4 new        205
+ 5 bush       129
+ 6 with       113
+ 7 iraq       108
+ 8 war         85
+ 9 overview    80
+10 nation      72
+# ℹ 5,896 more rows</code></pre>
 </div>
 </div>
-<p>Let’s also add another column where we use a regular expression to extract parts of the the title of each poem. I will use a <em>lookbehind</em> to find the poem titles, since the titles of the poems are preceded by roman numerals in Dickinson’s poems. I will search for capital letters after the lookbehind, since Dickinson’s poems have titles that are capitalized, whereas the text is lowercase. Then I will use a <em>lookahead</em> to search for a period since the titles of the poems end with a period always. I will also remove all the poems that don’t have a title so it will be easier to reference them later!</p>
+<p>So, excluding common, non-interesting words, we can see that “bush” is the most talked about noun in the headlines from the years 1996-2006. Let’s see the distribution of this over the years. I also want to exclude the mention of bush fires, which also took place and were talked about on NYT often, so I will reflect that in my regular expression using a negative look-forward!</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>poems_df_title <span class="ot">&lt;-</span> poems_dataframe <span class="sc">|&gt;</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">poem_title =</span> <span class="fu">str_extract</span>(text, <span class="st">"(?&lt;=</span><span class="sc">\\</span><span class="st">b[A-Z]{1,4}</span><span class="sc">\\</span><span class="st">.?</span><span class="sc">\\</span><span class="st">s)[A-Z][A-Z'</span><span class="sc">\\</span><span class="st">s]+(?=</span><span class="sc">\\</span><span class="st">.)"</span>)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(poem_title, text) <span class="sc">|&gt;</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(poem_title))</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>bush_mentioned <span class="ot">&lt;-</span> NYTimes <span class="sc">|&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Title_lower =</span> <span class="fu">str_to_lower</span>(Title))<span class="sc">|&gt;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date =</span> <span class="fu">dmy</span>(Date))<span class="sc">|&gt;</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">year</span>(date))<span class="sc">|&gt;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(Title_lower, <span class="st">"</span><span class="sc">\\</span><span class="st">bbush</span><span class="sc">\\</span><span class="st">b(?!</span><span class="sc">\\</span><span class="st">s*fires)"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(year)</span>
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>poems_df_title</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>bush_mentioned</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 127 × 2
-   poem_title      text                                                         
-   &lt;chr&gt;           &lt;chr&gt;                                                        
- 1 NOIR            "III. \n \nROUGE ET NOIR. \n \nSoul, wilt thou toss again? \…
- 2 A LIBRARY       "X. \n \nIN A LIBRARY. \n \nA precious, mouldering pleasure …
- 3 SECRET          "XIV. \n \nTHE SECRET. \n \nSome things that fly there be, -…
- 4 LONELY HOUSE    "XV. \n \nTHE LONELY HOUSE. \n \nI know some lonely houses o…
- 5 BOOK OF MARTYRS "XVIII. \n \nTHE BOOK OF MARTYRS. \n \nRead, sweet, how othe…
- 6 MYSTERY OF PAIN "XIX. \n \nTHE MYSTERY OF PAIN. \n \nPain has an element of …
- 7 BOOK            "XXI. \n \nA BOOK. \n \nHe ate and drank the precious words,…
- 8 A FLOWER        "VII. \n \nWITH A FLOWER. \n \nI hide myself within my flowe…
- 9 OUTLET          "XI. \n \nTHE OUTLET. \n \nMy river runs to thee: \nBlue sea…
-10 VAIN            "XII. \n \nIN VAIN. \n \nI cannot live with you, \nIt would …
-# ℹ 117 more rows</code></pre>
+<pre><code>  year  n
+1 1999  2
+2 2000 15
+3 2001 32
+4 2002 20
+5 2003 16
+6 2004 20
+7 2005 13
+8 2006  8</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(bush_mentioned, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> n)) <span class="sc">+</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Presence of 'Bush' in NYT Headlines yearly (1996–2006)"</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"summed count per year"</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  ) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TextAnalysis_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
-<p>Let’s make a new data frame unnests the current vector we have so we will have a new row where each one is one word of each poem. I will use a regular expression to select only letters and apostrophes, so I only have words in these vectors.</p>
+</div>
+<p>There was a peak in the mentions of “Bush” in the year 2001. This makes sense due to his inauguration as President of the United States and the September 11th both taking place that year.</p>
+<p>On the topic of presidents, let’s quantify how much different presidents were talked about in the New York Times across the time frame represented by this data. I will use another regular expression to find the words “Bush”, “Clinton”, and “Obama”, excluding the search for “bush fire”, mentions of “Hillary Clinton”, and “Michelle Obama”, as for this analysis I am only looking for information on the presidents. To do this, I will make use of a couple of lookarounds, which are proving to be quite useful for specifying data!</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>poem_words <span class="ot">&lt;-</span> poems_df_title <span class="sc">|&gt;</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">words =</span> <span class="fu">str_extract_all</span>(text, <span class="st">"[A-Za-z']+"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(poem_title, words) <span class="sc">|&gt;</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(words)<span class="sc">|&gt;</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">words=</span><span class="fu">str_to_lower</span>(words))</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(poem_words)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 2
-  poem_title words
-  &lt;chr&gt;      &lt;chr&gt;
-1 NOIR       iii  
-2 NOIR       rouge
-3 NOIR       et   
-4 NOIR       noir 
-5 NOIR       soul 
-6 NOIR       wilt </code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>president_names <span class="ot">&lt;-</span> NYTimes <span class="sc">|&gt;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">titles_lower =</span> <span class="fu">str_to_lower</span>(Title),</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">president =</span> <span class="fu">str_extract</span>(</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>      titles_lower,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">"(?&lt;!laura</span><span class="sc">\\</span><span class="st">s)</span><span class="sc">\\</span><span class="st">bbush(?!</span><span class="sc">\\</span><span class="st">s*fires?)</span><span class="sc">\\</span><span class="st">b|(?&lt;!hillary</span><span class="sc">\\</span><span class="st">s)</span><span class="sc">\\</span><span class="st">bclinton</span><span class="sc">\\</span><span class="st">b|</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="st">      (?&lt;!michelle</span><span class="sc">\\</span><span class="st">s)</span><span class="sc">\\</span><span class="st">bobama</span><span class="sc">\\</span><span class="st">b"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(titles_lower, president) <span class="sc">|&gt;</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(president))<span class="sc">|&gt;</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(president)<span class="sc">|&gt;</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">count=</span><span class="fu">n</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-</div>
-<p>Let’s see what words are the most common in Emily Dickinson’s poems:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>top_words <span class="ot">&lt;-</span> poem_words <span class="sc">|&gt;</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(words, <span class="at">sort =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(top_words)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 2
-  words     n
-  &lt;chr&gt; &lt;int&gt;
-1 the     690
-2 a       305
-3 and     280
-4 to      223
-5 of      196
-6 i       181</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>president_names <span class="sc">|&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> president, <span class="at">y =</span> count)) <span class="sc">+</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>()<span class="sc">+</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">'Mentions of "Bush" and "Clinton" in NYT Headlines (1996–2006)'</span>,</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"President"</span>,</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Count"</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  ) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TextAnalysis_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
-<p>Okay, this is kind of boring… as we are getting words that are not unique to Emily Dickinson’s poetry, just to the English Language. Still, let’s visualize the top 35 words of this to see if we can pick out anything interesting!</p>
+</div>
+<p>So, Bush was mentioned more than Clinton in this dataset from the years 1996 to 2006. Both were mentioned more than Obama, with 0 mentions.This makes sense as Obama only started running for election in 2007, right after this dataset ends. However, it is a bit surprising that he wasn’t mentioned at all prior to the year before his election. Curious!</p>
+<p>Finally, I am interested to see how the timing of the mentions of each of these presidents compares and if I can pull out historical dates from the peaks in the following plot.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>top_35_words <span class="ot">&lt;-</span> poem_words <span class="sc">|&gt;</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(words) <span class="sc">|&gt;</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">words =</span> <span class="fu">str_to_lower</span>(words)) <span class="sc">|&gt;</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(words, <span class="at">sort =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">35</span>)</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>top_35_words <span class="sc">|&gt;</span></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">words =</span> <span class="fu">fct_reorder</span>(words, n)) <span class="sc">|&gt;</span></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> words, <span class="at">x =</span> n)) <span class="sc">+</span></span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill=</span><span class="st">'red'</span>) <span class="sc">+</span></span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Most Common Words in Emily Dickinson's Poems"</span>,</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Word"</span>,</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of times word appears"</span></span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>  )<span class="sc">+</span></span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">6</span>, <span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>presidents_mentioned <span class="ot">&lt;-</span> NYTimes <span class="sc">|&gt;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Title_lower =</span> <span class="fu">str_to_lower</span>(Title)) <span class="sc">|&gt;</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date =</span> <span class="fu">dmy</span>(Date)) <span class="sc">|&gt;</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">year</span>(date)) <span class="sc">|&gt;</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(Title_lower, <span class="st">"</span><span class="sc">\\</span><span class="st">b(bush(?!</span><span class="sc">\\</span><span class="st">s*fires?)|clinton)</span><span class="sc">\\</span><span class="st">b"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">president =</span> <span class="fu">ifelse</span>(</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">str_detect</span>(Title_lower, <span class="st">"</span><span class="sc">\\</span><span class="st">bbush(?!</span><span class="sc">\\</span><span class="st">s*fires?)</span><span class="sc">\\</span><span class="st">b"</span>),</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Bush"</span>, <span class="st">"Clinton"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year, president) <span class="sc">|&gt;</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">n =</span> <span class="fu">n</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'year'. You can override using the
+`.groups` argument.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(presidents_mentioned, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> n, <span class="at">color =</span> president)) <span class="sc">+</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()<span class="sc">+</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">1996</span>, <span class="dv">2006</span>, <span class="at">by =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Presence of 'Bush' and 'Clinton' in NYT Headlines"</span>,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle=</span> <span class="st">"1996-2006"</span>,</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Summed count per year"</span>,</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"President"</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -374,152 +385,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p>This is still boring. So let’s look at the next 20 most common words to see if I can find any unique noun.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>words_35_55 <span class="ot">&lt;-</span> poem_words <span class="sc">|&gt;</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(words) <span class="sc">|&gt;</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">words =</span> <span class="fu">str_to_lower</span>(words)) <span class="sc">|&gt;</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(words) <span class="sc">|&gt;</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(n))<span class="sc">|&gt;</span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">35</span><span class="sc">:</span><span class="dv">55</span>)</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>words_35_55 <span class="sc">|&gt;</span></span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">words =</span> <span class="fu">fct_reorder</span>(words, n)) <span class="sc">|&gt;</span></span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> words, <span class="at">x =</span> n)) <span class="sc">+</span></span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill=</span><span class="st">'green'</span>, <span class="at">width =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Word frequency Emily Dickinson's Poems"</span>,</span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Word"</span>,</span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of times word appears"</span></span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>  )<span class="sc">+</span></span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">10</span>, <span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="TextAnalysis_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>There it is! So the most common noun in Emily Dickinson’s poetry is “day”.</p>
-<p>Let’s see what poems use this word the most.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>top_day_poems <span class="ot">&lt;-</span> poems_df_title <span class="sc">|&gt;</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">day_count =</span> <span class="fu">str_count</span>(<span class="fu">str_to_lower</span>(text), <span class="st">"</span><span class="sc">\\</span><span class="st">bday</span><span class="sc">\\</span><span class="st">b"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(day_count)) <span class="sc">|&gt;</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">10</span>)<span class="sc">|&gt;</span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(poem_title, day_count)</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>top_day_poems</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 10 × 2
-   poem_title      day_count
-   &lt;chr&gt;               &lt;int&gt;
- 1 PARLOR                  3
- 2 THE DAY                 2
- 3 JUGGLER OF DAY          2
- 4 LONELY HOUSE            1
- 5 MYSTERY OF PAIN         1
- 6 WIFE                    1
- 7 ARMIES                  1
- 8 GRASS                   1
- 9 WORLDS                  1
-10 DAY                     1</code></pre>
-</div>
-</div>
-<p>So, PARLOR is the poem that has the word “day” the most amount of times!</p>
-<p>If Dickinson is writing about day, surely she too is writing about night? Let’s see.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>top_night_poems <span class="ot">&lt;-</span> poems_df_title <span class="sc">|&gt;</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">night_count =</span> <span class="fu">str_count</span>(text, <span class="st">"(?i)</span><span class="sc">\\</span><span class="st">bnight</span><span class="sc">\\</span><span class="st">b"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(night_count)) <span class="sc">|&gt;</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">10</span>) <span class="sc">|&gt;</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(poem_title, night_count)</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>top_night_poems</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 10 × 2
-   poem_title      night_count
-   &lt;chr&gt;                 &lt;int&gt;
- 1 SEA OF SUNSET             2
- 2 COMING OF NIGHT           2
- 3 LONELY HOUSE              1
- 4 GRASS                     1
- 5 THE DAY                   1
- 6 RETURN                    1
- 7 CONTRACT                  1
- 8 LETTER                    1
- 9 HOME                      1
-10 PARLOR                    1</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>top15_night <span class="ot">&lt;-</span> poems_df_title <span class="sc">|&gt;</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">night_count =</span> <span class="fu">str_count</span>(text, <span class="st">"(?i)</span><span class="sc">\\</span><span class="st">bnight</span><span class="sc">\\</span><span class="st">b"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(night_count)) <span class="sc">|&gt;</span></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">15</span>)</span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>top15_night <span class="sc">|&gt;</span></span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">poem_title =</span> <span class="fu">fct_reorder</span>(poem_title, night_count)) <span class="sc">|&gt;</span></span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> poem_title, <span class="at">x =</span> night_count)) <span class="sc">+</span></span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"midnightblue"</span>) <span class="sc">+</span></span>
-<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Poems with the Most Mentions of “night”"</span>,</span>
-<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Poem"</span>,</span>
-<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">'Count of “night”'</span></span>
-<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="TextAnalysis_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>So, she does write about night as well!!!</p>
-<p>Let’s visualize the poems where she might write about BOTH day and night!</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>day_night_both <span class="ot">&lt;-</span> poems_df_title <span class="sc">|&gt;</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">day_count   =</span> <span class="fu">str_count</span>(text, <span class="st">"</span><span class="sc">\\</span><span class="st">bday</span><span class="sc">\\</span><span class="st">b"</span>),</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">night_count =</span> <span class="fu">str_count</span>(text, <span class="st">"</span><span class="sc">\\</span><span class="st">bnight</span><span class="sc">\\</span><span class="st">b"</span>)</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(day_count <span class="sc">&gt;</span> <span class="dv">0</span>, night_count <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>day_night_both</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 4
-  poem_title          text                                 day_count night_count
-  &lt;chr&gt;               &lt;chr&gt;                                    &lt;int&gt;       &lt;int&gt;
-1 GRASS               "IX. \n \nTHE GRASS. \n \nThe grass…         1           1
-2 THE DAY             "XII. \n \nPSALM OF THE DAY. \n \nA…         1           1
-3 LETTER              "V. \n \nTHE LETTER. \n \n\"GOING t…         1           1
-4 PARLOR              "IV. \n \nDAY'S PARLOR. \n \nThe da…         2           1
-5 HAD A GUINEA GOLDEN "XIX. \n \nI HAD A GUINEA GOLDEN. \…         1           1
-6 SOUL'S STORM        "XLIX. \n \nWe never know we go, --…         1           1</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>day_night_both <span class="sc">|&gt;</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> day_count, <span class="at">y =</span> night_count, <span class="at">label =</span> poem_title)) <span class="sc">+</span></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(<span class="at">force=</span><span class="dv">120</span>) <span class="sc">+</span></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">'Poems Mentioning Both “day” and “night”'</span>,</span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">'Count of “day”'</span>,</span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">'Count of “night”'</span></span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  ) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="TextAnalysis_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
+<p>We can see that the mentions of “Clinton” peak in 1998, when he was impeached. Mentions of “Bush” begin rising shortly after, with this pattern starting to get mentioned in 1999, when his campaign for presidential election was occuring and leading to his victory in 2000. Bush was inaugurated in 2001 and that year is also when the September 11th attacks took place, so mentions of Bush were extremely high that year. There is another peak in 2004 in “Bush” mentions again, given his re-election as president.</p>
+<p>We can use text data to see how much different topics are being talked about in the media, which is a very important thing to know, and it can be useful to identify specific periods of interest.</p>
+<p>And… that’s it for today!</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

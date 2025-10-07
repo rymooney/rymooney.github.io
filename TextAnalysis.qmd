@@ -3,194 +3,137 @@ title: "Text Analysis"
 format: html
 ---
 
-Today, I will be practicing my text analysis using str\_\*() commands, regular expressions, and plotting character-based data! To do this, I will be analyzing character data from all of Emily Dickinson's Poems!
+# The Task
+Today, I will be practicing my text analysis using **str\_\*()** commands, **regular expressions**, and plotting character-based data! To do this, I will be analyzing character data from all of *The New York Times'* headlines from years 1996-2006.
 
-Some of the packages I will need:
+# The Data
+The data is sample dataset containing headlines from [The New York Times](https://www.nytimes.com/), compiled by Professor Amber E. Boydstun at the University of California, Davis. The dataset can be accessed in the [RTextTools](https://www.rdocumentation.org/packages/RTextTools/versions/1.4.3/topics/NYTimes) library on R from the RTextTools package. The data is in the library in a data frame called NYTimes.
+
+```{r}
+#| message: false
+#| warning: false
+library(tidyverse)
+library(RTextTools) 
+data(NYTimes)
+as_tibble(NYTimes)
+```
+The libraries I will need:
 
 ```{r}
 #| message: false
 #| warning: false
 library(tidyverse) 
 library(ggrepel)
-```
-
-The original data is from [Gutenburg](https://www.gutenberg.org/files/12242/12242-h/12242-h.htm) and is on the GitHub repo of [Amherst-Statistics](https://github.com/Amherst-Statistics/DickinsonPoems).
-
-*Accessing the data, printing some of the contents, and reading a poem!*
-
-```{r}
-#| message: false
-#| warning: false
-devtools::install_github("Amherst-Statistics/DickinsonPoems") # this command was taken from the Amherst-Statistics repo linked above.
-
-files_Dickinson <- system.file("extdata", package = "DickinsonPoems") # this command was taken from the Amherst-Statistics repo linked above.
-
-head(list.files((files_Dickinson))) # first six files in the repo
-```
-
-```{r}
-poem166 <- paste(system.file("extdata", package = "DickinsonPoems"), 
-                  "gutenberg3.txt166", sep = "/")
-readLines(poem166) # this command was taken from the Amherst-Statistics repo linked above.
+library(stringr)
+library(lubridate)
 ```
 
 
-For future analyses, I will need a data frame, which will have one column as the identifier of the poem and the second column containing the text of that poem.
+# Let's analyze!
 
+Let's see what years the dataset has.
 ```{r}
-files <- list.files(files_Dickinson, pattern = "^gutenberg.*\\.txt\\d+$", full.names = TRUE)
+NYTimes_dates <- NYTimes |>
+  mutate(date_as_dmy = dmy(Date)) |>
+  summarize(
+    earliestdate = min(date_as_dmy, na.rm = TRUE),
+    latestdate   = max(date_as_dmy, na.rm = TRUE)
+  )
 
-poems_dataframe <- tibble(
-  title = basename(files),
-  text  = map_chr(files, ~ paste(readLines(.x, warn = FALSE), collapse = "\n"))
-)
-
-head(poems_dataframe)
+NYTimes_dates
 ```
-Let's also add another column where we use a regular expression to extract parts of the the title of each poem. I will use a *lookbehind* to find the poem titles, since the titles of the poems are preceded by roman numerals in Dickinson's poems. I will search for capital letters after the lookbehind, since Dickinson's poems have titles that are capitalized, whereas the text is lowercase. Then I will use a *lookahead* to search for a period since the titles of the poems end with a period always. I will also remove all the poems that don't have a title so it will be easier to reference them later!
+First, I am interested in the most common word that appears in The New York Times' headlines. I will look for words that are 3 characters or longer to avoid single letters and short words like "a" or "an".
 ```{r}
-poems_df_title <- poems_dataframe |>
-  mutate(
-    poem_title = str_extract(text, "(?<=\\b[A-Z]{1,4}\\.?\\s)[A-Z][A-Z'\\s]+(?=\\.)")
-  ) |>
-  select(poem_title, text) |>
-  filter(!is.na(poem_title))
-
-poems_df_title
-```
-
-Let's make a new data frame unnests the current vector we have so we will have a new row where each one is one word of each poem. 
-I will use a regular expression to select only letters and apostrophes, so I only have words in these vectors. 
-```{r}
-poem_words <- poems_df_title |>
-  mutate(words = str_extract_all(text, "[A-Za-z']+")) |>
-  select(poem_title, words) |>
-  unnest(words)|>
-  mutate(words=str_to_lower(words))
-
-head(poem_words)
-```
-
-Let's see what words are the most common in Emily Dickinson's poems:
-```{r}
-top_words <- poem_words |>
+word_counts <- NYTimes |>
+  mutate(Title_lower = str_to_lower(Title))|>
+  mutate(words = str_extract_all(Title_lower, "\\b[a-z]{3,}\\b")) |>
+  unnest(words) |>
   count(words, sort = TRUE)
 
-head(top_words)
+word_counts
 ```
 
-Okay, this is kind of boring... as we are getting words that are not unique to Emily Dickinson's poetry, just to the English Language. Still, let's visualize the top 35 words of this to see if we can pick out anything interesting!
+So, excluding common, non-interesting words, we can see that "bush" is the most talked about noun in the headlines from the years 1996-2006. Let's see the distribution of this over the years. I also want to exclude the mention of bush fires, which also took place and were talked about on NYT often, so I will reflect that in my regular expression using a negative look-forward!
 
 ```{r}
-top_35_words <- poem_words |>
-  unnest(words) |>
-  mutate(words = str_to_lower(words)) |>
-  count(words, sort = TRUE) |>
-  slice(1:35)
+bush_mentioned <- NYTimes |>
+  mutate(Title_lower = str_to_lower(Title))|>
+  mutate(date = dmy(Date))|>
+  mutate(year = year(date))|>
+  filter(str_detect(Title_lower, "\\bbush\\b(?!\\s*fires)")) |>
+  count(year)
 
-top_35_words |>
-  mutate(words = fct_reorder(words, n)) |>
-  ggplot(aes(y = words, x = n)) +
-  geom_col(fill='red') +
+bush_mentioned
+
+ggplot(bush_mentioned, aes(x = year, y = n)) +
+  geom_line() +
   labs(
-    title = "Most Common Words in Emily Dickinson's Poems",
-    x = "Word",
-    y = "Number of times word appears"
-  )+
-  theme(axis.text.x = element_text(size = 6, angle = 45, hjust = 1))
-```
-This is still boring. So let's look at the next 20 most common words to see if I can find any unique noun.
-
-```{r}
-words_35_55 <- poem_words |>
-  unnest(words) |>
-  mutate(words = str_to_lower(words)) |>
-  group_by(words) |>
-  summarise(n = n()) |>
-  arrange(desc(n))|>
-  slice(35:55)
-
-words_35_55 |>
-  mutate(words = fct_reorder(words, n)) |>
-  ggplot(aes(y = words, x = n)) +
-  geom_col(fill='green', width = 0.8) +
-  labs(
-    title = "Word frequency Emily Dickinson's Poems",
-    x = "Word",
-    y = "Number of times word appears"
-  )+
-  theme(axis.text.x = element_text(size = 10, angle = 45, hjust = 1))
-```
-
-There it is! So the most common noun in Emily Dickinson's poetry is "day".
-
-Let's see what poems use this word the most.
-
-```{r}
-top_day_poems <- poems_df_title |>
-  mutate(day_count = str_count(str_to_lower(text), "\\bday\\b")) |> 
-  arrange(desc(day_count)) |>
-  slice_head(n = 10)|>
-  select(poem_title, day_count)
-
-top_day_poems
-```
-
-So, PARLOR is the poem that has the word "day" the most amount of times!
-
-If Dickinson is writing about day, surely she too is writing about night? Let's see.
-
-```{r}
-top_night_poems <- poems_df_title |>
-  mutate(night_count = str_count(text, "(?i)\\bnight\\b")) |>
-  arrange(desc(night_count)) |>
-  slice_head(n = 10) |>
-  select(poem_title, night_count)
-
-top_night_poems
-```
-
-```{r}
-top15_night <- poems_df_title |>
-  mutate(night_count = str_count(text, "(?i)\\bnight\\b")) |>
-  arrange(desc(night_count)) |>
-  slice_head(n = 15)
-
-top15_night |>
-  mutate(poem_title = fct_reorder(poem_title, night_count)) |>
-  ggplot(aes(y = poem_title, x = night_count)) +
-  geom_col(fill = "midnightblue") +
-  labs(
-    title = "Poems with the Most Mentions of “night”",
-    x = "Poem",
-    y = 'Count of “night”'
-  )
-```
-
-So, she does write about night as well!!!
-
-Let's visualize the poems where she might write about BOTH day and night!
-
-```{r}
-day_night_both <- poems_df_title |>
-  mutate(
-    day_count   = str_count(text, "\\bday\\b"),
-    night_count = str_count(text, "\\bnight\\b")
-  ) |>
-  filter(day_count > 0, night_count > 0)
-
-day_night_both
-```
-
-```{r}
-day_night_both |>
-  ggplot(aes(x = day_count, y = night_count, label = poem_title)) +
-  geom_point() +
-  geom_text_repel(force=120) +
-  labs(
-    title = 'Poems Mentioning Both “day” and “night”',
-    x = 'Count of “day”',
-    y = 'Count of “night”'
+    title = "Presence of 'Bush' in NYT Headlines yearly (1996–2006)",
+    x = "Year",
+    y = "summed count per year"
   ) 
 ```
 
+There was a peak in the mentions of "Bush" in the year 2001. This makes sense due to his inauguration as President of the United States and the September 11th both taking place that year. 
+
+On the topic of presidents, let's quantify how much different presidents were talked about in the New York Times across the time frame represented by this data. I will use another regular expression to find the words "Bush", "Clinton", and "Obama", excluding the search for "bush fire", mentions of "Hillary Clinton", and "Michelle Obama", as for this analysis I am only looking for information on the presidents. To do this, I will make use of a couple of lookarounds, which are proving to be quite useful for specifying data!
+
+```{r}
+president_names <- NYTimes |>
+  mutate(
+    titles_lower = str_to_lower(Title),
+    president = str_extract(
+      titles_lower,
+      "(?<!laura\\s)\\bbush(?!\\s*fires?)\\b|(?<!hillary\\s)\\bclinton\\b|
+      (?<!michelle\\s)\\bobama\\b")) |>
+  select(titles_lower, president) |>
+  filter(!is.na(president))|>
+  group_by(president)|>
+  summarize(count=n())
+```
+
+```{r}
+president_names |>
+  ggplot(aes(x = president, y = count)) +
+  geom_col()+
+  labs(
+    title = 'Mentions of "Bush" and "Clinton" in NYT Headlines (1996–2006)',
+    x = "President",
+    y = "Count"
+  ) 
+```
+So, Bush was mentioned more than Clinton in this dataset from the years 1996 to 2006. Both were mentioned more than Obama, with 0 mentions.This makes sense as Obama only started running for election in 2007, right after this dataset ends. However, it is a bit surprising that he wasn't mentioned at all prior to the year before his election. Curious!
+
+Finally, I am interested to see how the timing of the mentions of each of these presidents compares and if I can pull out historical dates from the peaks in the following plot. 
+
+```{r}
+presidents_mentioned <- NYTimes |>
+  mutate(Title_lower = str_to_lower(Title)) |>
+  mutate(date = dmy(Date)) |>
+  mutate(year = year(date)) |>
+  filter(str_detect(Title_lower, "\\b(bush(?!\\s*fires?)|clinton)\\b")) |>
+  mutate(
+    president = ifelse(
+      str_detect(Title_lower, "\\bbush(?!\\s*fires?)\\b"),
+      "Bush", "Clinton")) |>
+  group_by(year, president) |>
+  summarize(n = n())
+
+ggplot(presidents_mentioned, aes(x = year, y = n, color = president)) +
+  geom_line() +
+  geom_point()+
+  scale_x_continuous(breaks = seq(1996, 2006, by = 1)) +
+  labs(
+    title = "Presence of 'Bush' and 'Clinton' in NYT Headlines",
+    subtitle= "1996-2006",
+    x = "Year",
+    y = "Summed count per year",
+    color = "President"
+  )
+```
+
+We can see that the mentions of "Clinton" peak in 1998, when he was impeached. Mentions of "Bush" begin rising shortly after, with this pattern starting to get mentioned in 1999, when his campaign for presidential election was occuring and leading to his victory in 2000. Bush was inaugurated in 2001 and that year is also when the September 11th attacks took place, so mentions of Bush were extremely high that year. There is another peak in 2004 in "Bush" mentions again, given his re-election as president. 
+
+We can use text data to see how much different topics are being talked about in the media, which is a very important thing to know, and it can be useful to identify specific periods of interest.
+
+And... that's it for today!

@@ -12,10 +12,10 @@ website:
         text: About
       - text: Data Viz
         menu: 
-          - text: "UNESCO World Heritage Sites"
-            href: UNESCO.qmd
           - text: "Pixar Ratings"
             href: pixar.qmd
+          - text: "UNESCO World Heritage Sites"
+            href: UNESCO.qmd
       - href: TextAnalysis.qmd
         text: Text Analysis
             
