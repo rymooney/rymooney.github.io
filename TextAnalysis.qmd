@@ -119,7 +119,7 @@ presidents_mentioned <- NYTimes |>
       str_detect(Title_lower, "\\bbush(?!\\s*fires?)\\b"),
       "Bush", "Clinton")) |>
   group_by(year, president) |>
-  summarize(n = n())
+  summarize(n = n(), .groups = "drop")
 
 ggplot(presidents_mentioned, aes(x = year, y = n, color = president)) +
   geom_line() +
