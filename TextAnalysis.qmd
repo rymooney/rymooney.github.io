@@ -42,18 +42,9 @@ NYTimes_dates <- NYTimes |>
 
 NYTimes_dates
 ```
-First, I am interested in the most common word that appears in The New York Times' headlines. I will look for words that are 3 characters or longer to avoid single letters and short words like "a" or "an".
-```{r}
-word_counts <- NYTimes |>
-  mutate(Title_lower = str_to_lower(Title))|>
-  mutate(words = str_extract_all(Title_lower, "\\b[a-z]{3,}\\b")) |>
-  unnest(words) |>
-  count(words, sort = TRUE)
+First, I know that President Bush was a hot topic during these years. 
 
-word_counts
-```
-
-So, excluding common, non-interesting words, we can see that "bush" is the most talked about noun in the headlines from the years 1996-2006. Let's see the distribution of this over the years. I also want to exclude the mention of bush fires, which also took place and were talked about on NYT often, so I will reflect that in my regular expression using a negative look-forward!
+Let's see the distribution of this over the years included in this dataset. I also want to exclude the mention of bush fires, which also took place and may have been talked about on NYT often, so I will reflect that in my regular expression using a negative look-forward!
 
 ```{r}
 bush_mentioned <- NYTimes |>
