@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Text Analysis – Ryan Mooney</title>
+<title>simulation – Ryan Mooney</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -153,11 +153,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link active" href="./TextAnalysis.html" aria-current="page"> 
+    <a class="nav-link" href="./TextAnalysis.html"> 
 <span class="menu-text">Text Analysis</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./simulation.html"> 
+    <a class="nav-link active" href="./simulation.html" aria-current="page"> 
 <span class="menu-text">Simulating Mutations</span></a>
   </li>  
 </ul>
@@ -177,8 +177,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#the-task" id="toc-the-task" class="nav-link active" data-scroll-target="#the-task">The Task</a></li>
-  <li><a href="#the-data" id="toc-the-data" class="nav-link" data-scroll-target="#the-data">The Data</a></li>
-  <li><a href="#lets-analyze" id="toc-lets-analyze" class="nav-link" data-scroll-target="#lets-analyze">Let’s analyze!</a></li>
+  <li><a href="#beginning-the-model" id="toc-beginning-the-model" class="nav-link" data-scroll-target="#beginning-the-model">Beginning the model</a></li>
+  <li><a href="#lets-visualize" id="toc-lets-visualize" class="nav-link" data-scroll-target="#lets-visualize">Let’s visualize!</a></li>
   </ul>
 </nav>
     </div>
@@ -187,7 +187,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Text Analysis</h1>
+<h1 class="title">simulation</h1>
 </div>
 
 
@@ -206,164 +206,77 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="the-task" class="level1">
 <h1>The Task</h1>
-<p>Today, I will be practicing my text analysis using <strong>str_*()</strong> commands, <strong>regular expressions</strong>, and plotting character-based data! To do this, I will be analyzing character data from all of <em>The New York Times’</em> headlines from years 1996-2006.</p>
+<p>Today, my goal is to simulate probabilities related to the accumulation of genetic mutations in somatic cells, which are key drivers of oncogenesis. The mutations being modeled arise from spontaneous events in cells and environmental conditions. I will be modeling these mutations from a single cell the undergoes n mitotic divisions and yields a final cell lineage. At each division, I will assume there is an equal probability, prob, that a mutation occurs. Once any mutation happens, the lineage is considered “mutated” and is no longer considered a wild type population. We want to estimate the probability that the lineage has at least 1 mutation after n divisions.</p>
 </section>
-<section id="the-data" class="level1">
-<h1>The Data</h1>
-<p>The data is sample dataset containing headlines from <a href="https://www.nytimes.com/">The New York Times</a>, compiled by Professor Amber E. Boydstun at the University of California, Davis. The dataset can be accessed in the <a href="https://www.rdocumentation.org/packages/RTextTools/versions/1.4.3/topics/NYTimes">RTextTools</a> library on R from the RTextTools package. The data is in the library in a data frame called NYTimes.</p>
+<section id="beginning-the-model" class="level1">
+<h1>Beginning the model</h1>
+<p>To begin, I will set up a function to detect mutations. To do this, I will write a function with two inputs, one being the number of divisions, n_divisions, that we can model the cell dividing n times, and the second being prob, the probability of a mutation occuring at each division. For each division, I will generate a random uniform number between 0 and 1 with runif(). Then, I will compare this number with the probability value, prob, and say that there was a mutation if the random uniform number generated at that division is &lt; the probability that there is a mutation at that division. This will create a logical vector. If the sum of this logical vector is greater than 0, then there is a mutation in that simulated lineage.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RTextTools) </span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(NYTimes)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">as_tibble</span>(NYTimes)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">4747</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>has_mutation_after_divisions <span class="ot">&lt;-</span> <span class="cf">function</span>(n_divisions, prob){</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  random <span class="ot">&lt;-</span> <span class="fu">runif</span>(n_divisions)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  mutation_flag <span class="ot">&lt;-</span> random <span class="sc">&lt;</span> prob</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  total_mutations <span class="ot">&lt;-</span> <span class="fu">sum</span>(mutation_flag)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  total_mutations <span class="sc">&gt;</span> <span class="dv">0</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The above logic can be used to continue simulating on larger numbers of lineages. To start, we will simulate the probability of 0.001, meaning a 0.1% chance that each cell division has a 0.1% chance of generating a new mutation that persists in the lineage. I will also start with 10000 cells to simulate per division count. I will simulate these 10000 cells to go through 50 cell divisions. I will then use map() piped into list_rbind() to create a data frame that has two columns: divisions, meaning the number of cell divisions each lineage undergoes, and prob_mutated, the probability that at least one lineage has accumulated a mutation. The inner map_lgl() simulates n_cells cells going through the divisions, and suns the has_mutation_after_divisions() function defined above on each cell lineage. This inner map_lgl() function returns TRUE if a lineage picked up at least one mutation, and returns FALSE otherwise. The final tibble() summarize the results for each of the 10000 cells after each division cycle, and calculates the proportion of TRUE values after that division cycle. The final pipe into list_rbind() gives us a final data frame of the proportion of lineages that have a mutation after each division.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">4747</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>prob <span class="ot">&lt;-</span> <span class="fl">0.001</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>n_cells <span class="ot">&lt;-</span> <span class="dv">10000</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>number_of_divisions <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">50</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">map</span>(number_of_divisions, <span class="cf">function</span>(n) {</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  outcomes <span class="ot">&lt;-</span> <span class="fu">map_lgl</span>(<span class="dv">1</span><span class="sc">:</span>n_cells, <span class="cf">function</span>(x) {</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">has_mutation_after_divisions</span>(<span class="at">n_divisions =</span> n, <span class="at">prob =</span> prob)})</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">divisions =</span> n, <span class="at">prob_mutated =</span> <span class="fu">mean</span>(outcomes))</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>}) <span class="sc">|&gt;</span> <span class="fu">list_rbind</span>()</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>results</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3,104 × 5
-   Article_ID Date      Title                                 Subject Topic.Code
-        &lt;int&gt; &lt;fct&gt;     &lt;fct&gt;                                 &lt;fct&gt;        &lt;int&gt;
- 1      41246 1-Jan-96  Nation's Smaller Jails Struggle To C… Jails …         12
- 2      41257 2-Jan-96  FEDERAL IMPASSE SADDLING STATES WITH… Federa…         20
- 3      41268 3-Jan-96  Long, Costly Prelude Does Little To … Conten…         20
- 4      41279 4-Jan-96  Top Leader of the Bosnian Serbs Now … Bosnia…         19
- 5      41290 5-Jan-96  BATTLE OVER THE BUDGET: THE OVERVIEW… Battle…          1
- 6      41302 7-Jan-96  South African Democracy Stumbles on … politi…         19
- 7      41314 8-Jan-96  Among Economists, Little Fear on Def… econom…          1
- 8      41333 10-Jan-96 BATTLE OVER THE BUDGET: THE OVERVIEW… budget…          1
- 9      41344 11-Jan-96 High Court Is Cool To Census Change   census…         20
-10      41355 12-Jan-96 TURMOIL AT BARNEYS: THE DIFFICULTIES… barney…         15
-# ℹ 3,094 more rows</code></pre>
+<pre><code># A tibble: 50 × 2
+   divisions prob_mutated
+       &lt;int&gt;        &lt;dbl&gt;
+ 1         1       0.0017
+ 2         2       0.0019
+ 3         3       0.0028
+ 4         4       0.0037
+ 5         5       0.005 
+ 6         6       0.0062
+ 7         7       0.0063
+ 8         8       0.0072
+ 9         9       0.01  
+10        10       0.0086
+# ℹ 40 more rows</code></pre>
 </div>
-</div>
-<p>The libraries I will need:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) </span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggrepel)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="lets-analyze" class="level1">
-<h1>Let’s analyze!</h1>
-<p>Let’s see what years the dataset has.</p>
+<section id="lets-visualize" class="level1">
+<h1>Let’s visualize!</h1>
+<p>Let’s visualize what this data frame looks like graphically as mutations are accumulated across the simulated cell populations.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>NYTimes_dates <span class="ot">&lt;-</span> NYTimes <span class="sc">|&gt;</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date_as_dmy =</span> <span class="fu">dmy</span>(Date)) <span class="sc">|&gt;</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">earliestdate =</span> <span class="fu">min</span>(date_as_dmy, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">latestdate   =</span> <span class="fu">max</span>(date_as_dmy, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>NYTimes_dates</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  earliestdate latestdate
-1   1996-01-01 2006-12-31</code></pre>
-</div>
-</div>
-<p>First, I know that President Bush was a hot topic during these years.</p>
-<p>Let’s see the distribution of this over the years included in this dataset. I also want to exclude the mention of bush fires, which also took place and may have been talked about on NYT often, so I will reflect that in my regular expression using a negative look-forward!</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>bush_mentioned <span class="ot">&lt;-</span> NYTimes <span class="sc">|&gt;</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Title_lower =</span> <span class="fu">str_to_lower</span>(Title))<span class="sc">|&gt;</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date =</span> <span class="fu">dmy</span>(Date))<span class="sc">|&gt;</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">year</span>(date))<span class="sc">|&gt;</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(Title_lower, <span class="st">"</span><span class="sc">\\</span><span class="st">bbush</span><span class="sc">\\</span><span class="st">b(?!</span><span class="sc">\\</span><span class="st">s*fires)"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(year)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>bush_mentioned</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  year  n
-1 1999  2
-2 2000 15
-3 2001 32
-4 2002 20
-5 2003 16
-6 2004 20
-7 2005 13
-8 2006  8</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(bush_mentioned, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> n)) <span class="sc">+</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Presence of 'Bush' in NYT Headlines yearly (1996–2006)"</span>,</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"summed count per year"</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  ) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(results, <span class="fu">aes</span>(<span class="at">x =</span> divisions, <span class="at">y =</span> prob_mutated)) <span class="sc">+</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Probability a cell lineage has at least one mutation"</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Mutation probability of 0.1% per division for 10000 starting cells"</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Number of mitotic divisions"</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="cn">NULL</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="TextAnalysis_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="simulation_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>There was a peak in the mentions of “Bush” in the year 2001. This makes sense due to his inauguration as President of the United States and the September 11th both taking place that year.</p>
-<p>On the topic of presidents, let’s quantify how much different presidents were talked about in the New York Times across the time frame represented by this data. I will use another regular expression to find the words “Bush”, “Clinton”, and “Obama”, excluding the search for “bush fire”, mentions of “Hillary Clinton”, and “Michelle Obama”, as for this analysis I am only looking for information on the presidents. To do this, I will make use of a couple of lookarounds, which are proving to be quite useful for specifying data!</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>president_names <span class="ot">&lt;-</span> NYTimes <span class="sc">|&gt;</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">titles_lower =</span> <span class="fu">str_to_lower</span>(Title),</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">president =</span> <span class="fu">str_extract</span>(</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>      titles_lower,</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">"(?&lt;!laura</span><span class="sc">\\</span><span class="st">s)</span><span class="sc">\\</span><span class="st">bbush(?!</span><span class="sc">\\</span><span class="st">s*fires?)</span><span class="sc">\\</span><span class="st">b|(?&lt;!hillary</span><span class="sc">\\</span><span class="st">s)</span><span class="sc">\\</span><span class="st">bclinton</span><span class="sc">\\</span><span class="st">b|</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="st">      (?&lt;!michelle</span><span class="sc">\\</span><span class="st">s)</span><span class="sc">\\</span><span class="st">bobama</span><span class="sc">\\</span><span class="st">b"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(titles_lower, president) <span class="sc">|&gt;</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(president))<span class="sc">|&gt;</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(president)<span class="sc">|&gt;</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">count=</span><span class="fu">n</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>president_names <span class="sc">|&gt;</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> president, <span class="at">y =</span> count)) <span class="sc">+</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>()<span class="sc">+</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">'Mentions of "Bush" and "Clinton" in NYT Headlines (1996–2006)'</span>,</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"President"</span>,</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Count"</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  ) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="TextAnalysis_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>So, Bush was mentioned more than Clinton in this dataset from the years 1996 to 2006. Both were mentioned more than Obama, with 0 mentions.This makes sense as Obama only started running for election in 2007, right after this dataset ends. However, it is a bit surprising that he wasn’t mentioned at all prior to the year before his election. Curious!</p>
-<p>Finally, I am interested to see how the timing of the mentions of each of these presidents compares and if I can pull out historical dates from the peaks in the following plot.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>presidents_mentioned <span class="ot">&lt;-</span> NYTimes <span class="sc">|&gt;</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Title_lower =</span> <span class="fu">str_to_lower</span>(Title)) <span class="sc">|&gt;</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date =</span> <span class="fu">dmy</span>(Date)) <span class="sc">|&gt;</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">year</span>(date)) <span class="sc">|&gt;</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(Title_lower, <span class="st">"</span><span class="sc">\\</span><span class="st">b(bush(?!</span><span class="sc">\\</span><span class="st">s*fires?)|clinton)</span><span class="sc">\\</span><span class="st">b"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">president =</span> <span class="fu">ifelse</span>(</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">str_detect</span>(Title_lower, <span class="st">"</span><span class="sc">\\</span><span class="st">bbush(?!</span><span class="sc">\\</span><span class="st">s*fires?)</span><span class="sc">\\</span><span class="st">b"</span>),</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Bush"</span>, <span class="st">"Clinton"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year, president) <span class="sc">|&gt;</span></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(presidents_mentioned, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> n, <span class="at">color =</span> president)) <span class="sc">+</span></span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()<span class="sc">+</span></span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">1996</span>, <span class="dv">2006</span>, <span class="at">by =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Presence of 'Bush' and 'Clinton' in NYT Headlines"</span>,</span>
-<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle=</span> <span class="st">"1996-2006"</span>,</span>
-<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
-<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Summed count per year"</span>,</span>
-<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"President"</span></span>
-<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="TextAnalysis_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>We can see that the mentions of “Clinton” peak in 1998, when he was impeached. Mentions of “Bush” begin rising shortly after, with this pattern starting to get mentioned in 1999, when his campaign for presidential election was occuring and leading to his victory in 2000. Bush was inaugurated in 2001 and that year is also when the September 11th attacks took place, so mentions of Bush were extremely high that year. There is another peak in 2004 in “Bush” mentions again, given his re-election as president.</p>
-<p>We can use text data to see how much different topics are being talked about in the media, which is a very important thing to know, and it can be useful to identify specific periods of interest.</p>
-<p>And… that’s it for today!</p>
 
 
 </section>

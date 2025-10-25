@@ -1,0 +1,64 @@
+---
+title: "simulation"
+format: html
+---
+
+# The Task
+
+Today, my goal is to simulate probabilities related to the accumulation of genetic mutations in somatic cells, which are key drivers of oncogenesis. The mutations being modeled arise from spontaneous events in cells and environmental conditions. I will be modeling these mutations from a single cell the undergoes n mitotic divisions and yields a final cell lineage. At each division, I will assume there is an equal probability, prob, that a mutation occurs. Once any mutation happens, the lineage is considered “mutated” and is no longer considered a wild type population. We want to estimate the probability that the lineage has at least 1 mutation after n divisions. 
+
+# Beginning the model
+
+To begin, I will set up a function to detect mutations. To do this, I will write a function with two inputs, one being the number of divisions, n_divisions, that we can model the cell dividing n times, and the second being prob, the probability of a mutation occuring at each division. For each division, I will generate a random uniform number between 0 and 1 with runif(). Then, I will compare this number with the probability value, prob, and say that there was a mutation if the random uniform number generated at that division is < the probability that there is a mutation at that division. This will create a logical vector. If the sum of this logical vector is greater than 0, then there is a mutation in that simulated lineage.
+
+```{r}
+set.seed(4747)
+
+has_mutation_after_divisions <- function(n_divisions, prob){
+  random <- runif(n_divisions)
+  mutation_flag <- random < prob
+  total_mutations <- sum(mutation_flag)
+  total_mutations > 0
+}
+```
+
+The above logic can be used to continue simulating on larger numbers of lineages. To start, we will simulate the probability of 0.001, meaning a 0.1% chance that each cell division has a 0.1% chance of generating a new mutation that persists in the lineage. I will also start with 10000 cells to simulate per division count. I will simulate these 10000 cells to go through 50 cell divisions. I will then use map() piped into list_rbind() to create a data frame that has two columns: divisions, meaning the number of cell divisions each lineage undergoes, and prob_mutated, the probability that at least one lineage has accumulated a mutation. The inner map_lgl() simulates n_cells cells going through the divisions, and suns the has_mutation_after_divisions() function defined above on each cell lineage. This inner map_lgl() function returns TRUE if a lineage picked up at least one mutation, and returns FALSE otherwise. The final tibble() summarize the results for each of the 10000 cells after each division cycle, and calculates the proportion of TRUE values after that division cycle. The final pipe into list_rbind() gives us a final data frame of the proportion of lineages that have a mutation after each division. 
+
+```{r}
+#| message: false
+#| warning: false
+library(tidyverse)
+
+set.seed(4747)
+prob <- 0.001
+n_cells <- 10000
+number_of_divisions <- 1:50
+
+results <- map(number_of_divisions, function(n) {
+  outcomes <- map_lgl(1:n_cells, function(x) {
+    has_mutation_after_divisions(n_divisions = n, prob = prob)})
+  tibble(divisions = n, prob_mutated = mean(outcomes))
+}) |> list_rbind()
+
+results
+```
+
+
+# Let's visualize!
+
+Let's visualize what this data frame looks like graphically as mutations are accumulated across the simulated cell populations. 
+```{r}
+ggplot(results, aes(x = divisions, y = prob_mutated)) +
+  geom_line() +
+  geom_point() +
+  labs(
+    title = "Probability a cell lineage has at least one mutation",
+    subtitle = "Mutation probability of 0.1% per division for 10000 starting cells",
+    x = "Number of mitotic divisions",
+    y = NULL
+  ) +
+  theme_minimal(base_size = 14)
+```
+
+
+
