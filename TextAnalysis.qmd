@@ -4,9 +4,11 @@ format: html
 ---
 
 # The Task
+
 Today, I will be practicing my text analysis using **str\_\*()** commands, **regular expressions**, and plotting character-based data! To do this, I will be analyzing character data from all of *The New York Times'* headlines from years 1996-2006.
 
 # The Data
+
 The data is sample dataset containing headlines from [The New York Times](https://www.nytimes.com/), compiled by Professor Amber E. Boydstun at the University of California, Davis. The dataset can be accessed in the [RTextTools](https://www.rdocumentation.org/packages/RTextTools/versions/1.4.3/topics/NYTimes) library on R from the RTextTools package. The data is in the library in a data frame called NYTimes.
 
 ```{r}
@@ -17,6 +19,7 @@ library(RTextTools)
 data(NYTimes)
 as_tibble(NYTimes)
 ```
+
 The libraries I will need:
 
 ```{r}
@@ -28,10 +31,10 @@ library(stringr)
 library(lubridate)
 ```
 
-
 # Let's analyze!
 
 Let's see what years the dataset has.
+
 ```{r}
 NYTimes_dates <- NYTimes |>
   mutate(date_as_dmy = dmy(Date)) |>
@@ -42,7 +45,8 @@ NYTimes_dates <- NYTimes |>
 
 NYTimes_dates
 ```
-First, I know that President Bush was a hot topic during these years. 
+
+First, I know that President Bush was a hot topic during these years.
 
 Let's see the distribution of this over the years included in this dataset. I also want to exclude the mention of bush fires, which also took place and may have been talked about on NYT often, so I will reflect that in my regular expression using a negative look-forward!
 
@@ -65,7 +69,7 @@ ggplot(bush_mentioned, aes(x = year, y = n)) +
   ) 
 ```
 
-There was a peak in the mentions of "Bush" in the year 2001. This makes sense due to his inauguration as President of the United States and the September 11th both taking place that year. 
+There was a peak in the mentions of "Bush" in the year 2001. This makes sense due to his inauguration as President of the United States and the September 11th both taking place that year.
 
 On the topic of presidents, let's quantify how much different presidents were talked about in the New York Times across the time frame represented by this data. I will use another regular expression to find the words "Bush", "Clinton", and "Obama", excluding the search for "bush fire", mentions of "Hillary Clinton", and "Michelle Obama", as for this analysis I am only looking for information on the presidents. To do this, I will make use of a couple of lookarounds, which are proving to be quite useful for specifying data!
 
@@ -93,9 +97,10 @@ president_names |>
     y = "Count"
   ) 
 ```
+
 So, Bush was mentioned more than Clinton in this dataset from the years 1996 to 2006. Both were mentioned more than Obama, with 0 mentions.This makes sense as Obama only started running for election in 2007, right after this dataset ends. However, it is a bit surprising that he wasn't mentioned at all prior to the year before his election. Curious!
 
-Finally, I am interested to see how the timing of the mentions of each of these presidents compares and if I can pull out historical dates from the peaks in the following plot. 
+Finally, I am interested to see how the timing of the mentions of each of these presidents compares and if I can pull out historical dates from the peaks in the following plot.
 
 ```{r}
 #| message: false
@@ -125,7 +130,7 @@ ggplot(presidents_mentioned, aes(x = year, y = n, color = president)) +
   )
 ```
 
-We can see that the mentions of "Clinton" peak in 1998, when he was impeached. Mentions of "Bush" begin rising shortly after, with this pattern starting to get mentioned in 1999, when his campaign for presidential election was occuring and leading to his victory in 2000. Bush was inaugurated in 2001 and that year is also when the September 11th attacks took place, so mentions of Bush were extremely high that year. There is another peak in 2004 in "Bush" mentions again, given his re-election as president. 
+We can see that the mentions of "Clinton" peak in 1998, when he was impeached. Mentions of "Bush" begin rising shortly after, with this pattern starting to get mentioned in 1999, when his campaign for presidential election was occuring and leading to his victory in 2000. Bush was inaugurated in 2001 and that year is also when the September 11th attacks took place, so mentions of Bush were extremely high that year. There is another peak in 2004 in "Bush" mentions again, given his re-election as president.
 
 We can use text data to see how much different topics are being talked about in the media, which is a very important thing to know, and it can be useful to identify specific periods of interest.
 
