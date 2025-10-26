@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>simulation – Ryan Mooney</title>
+<title>Simulation – Ryan Mooney</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -179,6 +179,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#the-task" id="toc-the-task" class="nav-link active" data-scroll-target="#the-task">The Task</a></li>
   <li><a href="#beginning-the-model" id="toc-beginning-the-model" class="nav-link" data-scroll-target="#beginning-the-model">Beginning the model</a></li>
   <li><a href="#lets-visualize" id="toc-lets-visualize" class="nav-link" data-scroll-target="#lets-visualize">Let’s visualize!</a></li>
+  <li><a href="#thats-it" id="toc-thats-it" class="nav-link" data-scroll-target="#thats-it">That’s it!</a></li>
   </ul>
 </nav>
     </div>
@@ -187,7 +188,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">simulation</h1>
+<h1 class="title">Simulation</h1>
 </div>
 
 
@@ -212,31 +213,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1>Beginning the model</h1>
 <p>To begin, I will set up a function to detect mutations. To do this, I will write a function with two inputs, one being the number of divisions, n_divisions, that we can model the cell dividing n times, and the second being prob, the probability of a mutation occuring at each division. For each division, I will generate a random uniform number between 0 and 1 with runif(). Then, I will compare this number with the probability value, prob, and say that there was a mutation if the random uniform number generated at that division is &lt; the probability that there is a mutation at that division. This will create a logical vector. If the sum of this logical vector is greater than 0, then there is a mutation in that simulated lineage.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">4747</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>has_mutation_after_divisions <span class="ot">&lt;-</span> <span class="cf">function</span>(n_divisions, prob){</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  random <span class="ot">&lt;-</span> <span class="fu">runif</span>(n_divisions)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  mutation_flag <span class="ot">&lt;-</span> random <span class="sc">&lt;</span> prob</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  total_mutations <span class="ot">&lt;-</span> <span class="fu">sum</span>(mutation_flag)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  total_mutations <span class="sc">&gt;</span> <span class="dv">0</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">4747</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>has_mutation_after_divisions <span class="ot">&lt;-</span> <span class="cf">function</span>(n_divisions, prob){</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  random <span class="ot">&lt;-</span> <span class="fu">runif</span>(n_divisions)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  mutation_flag <span class="ot">&lt;-</span> random <span class="sc">&lt;</span> prob</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  total_mutations <span class="ot">&lt;-</span> <span class="fu">sum</span>(mutation_flag)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  total_mutations <span class="sc">&gt;</span> <span class="dv">0</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>The above logic can be used to continue simulating on larger numbers of lineages. To start, we will simulate the probability of 0.001, meaning a 0.1% chance that each cell division has a 0.1% chance of generating a new mutation that persists in the lineage. I will also start with 10000 cells to simulate per division count. I will simulate these 10000 cells to go through 50 cell divisions. I will then use map() piped into list_rbind() to create a data frame that has two columns: divisions, meaning the number of cell divisions each lineage undergoes, and prob_mutated, the probability that at least one lineage has accumulated a mutation. The inner map_lgl() simulates n_cells cells going through the divisions, and suns the has_mutation_after_divisions() function defined above on each cell lineage. This inner map_lgl() function returns TRUE if a lineage picked up at least one mutation, and returns FALSE otherwise. The final tibble() summarize the results for each of the 10000 cells after each division cycle, and calculates the proportion of TRUE values after that division cycle. The final pipe into list_rbind() gives us a final data frame of the proportion of lineages that have a mutation after each division.</p>
+<p>The above logic can be used to continue simulating on larger numbers of lineages. To start, we will simulate the probability of 0.001, meaning a 0.1% chance that each cell division has a 0.1% chance of generating a new mutation that persists in the lineage. I will also start with 10000 cells to simulate per division count. I will simulate these 10000 cells to go through 50 cell divisions. I will then use map() piped into list_rbind() to create a data frame that has two columns: divisions, meaning the number of cell divisions each lineage undergoes, and prob_mutated, the probability that at least one lineage has accumulated a mutation. The inner map_lgl() simulates n_cells cells going through the divisions, and sums the has_mutation_after_divisions() function defined above on each cell lineage. This inner map_lgl() function returns TRUE if a lineage picked up at least one mutation, and returns FALSE otherwise. The final tibble() summarize the results for each of the 10000 cells after each division cycle, and calculates the proportion of TRUE values after that division cycle. The final pipe into list_rbind() gives us a final data frame of the proportion of lineages that have a mutation after each division.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">4747</span>)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>prob <span class="ot">&lt;-</span> <span class="fl">0.001</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>n_cells <span class="ot">&lt;-</span> <span class="dv">10000</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>number_of_divisions <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">50</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">map</span>(number_of_divisions, <span class="cf">function</span>(n) {</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  outcomes <span class="ot">&lt;-</span> <span class="fu">map_lgl</span>(<span class="dv">1</span><span class="sc">:</span>n_cells, <span class="cf">function</span>(x) {</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">has_mutation_after_divisions</span>(<span class="at">n_divisions =</span> n, <span class="at">prob =</span> prob)})</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">divisions =</span> n, <span class="at">prob_mutated =</span> <span class="fu">mean</span>(outcomes))</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>}) <span class="sc">|&gt;</span> <span class="fu">list_rbind</span>()</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>results</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">4747</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>prob_0 <span class="ot">&lt;-</span> <span class="fl">0.001</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>n_cells <span class="ot">&lt;-</span> <span class="dv">10000</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>number_of_divisions <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">50</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">map</span>(number_of_divisions, <span class="cf">function</span>(n) {</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  outcomes <span class="ot">&lt;-</span> <span class="fu">map_lgl</span>(<span class="dv">1</span><span class="sc">:</span>n_cells, <span class="cf">function</span>(x) {</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">has_mutation_after_divisions</span>(<span class="at">n_divisions =</span> n, <span class="at">prob =</span> prob_0)})</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">divisions =</span> n, <span class="at">prob_mutated =</span> <span class="fu">mean</span>(outcomes))</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>}) <span class="sc">|&gt;</span> <span class="fu">list_rbind</span>()</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>results</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 50 × 2
    divisions prob_mutated
@@ -259,16 +259,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1>Let’s visualize!</h1>
 <p>Let’s visualize what this data frame looks like graphically as mutations are accumulated across the simulated cell populations.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(results, <span class="fu">aes</span>(<span class="at">x =</span> divisions, <span class="at">y =</span> prob_mutated)) <span class="sc">+</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(results, <span class="fu">aes</span>(<span class="at">x =</span> divisions, <span class="at">y =</span> prob_mutated <span class="sc">*</span> <span class="dv">100</span>)) <span class="sc">+</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Probability a cell lineage has at least one mutation"</span>,</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Mutation probability of 0.1% per division for 10000 starting cells"</span>,</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Number of mitotic divisions"</span>,</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="cn">NULL</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">100</span>)) <span class="sc">+</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Probability a cell lineage has at least one mutation"</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Mutation probability of 0.1% per division for 10,000 starting cells"</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Number of mitotic divisions"</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Lineages with ≥1 mutation (%)"</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -277,6 +277,114 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+<p>Let’s check how this plot changes with a a higher frequency of mutation, say a 1% chance of a mutation each cell division.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">4747</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>prob_1 <span class="ot">&lt;-</span> <span class="fl">0.01</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>n_cells <span class="ot">&lt;-</span> <span class="dv">10000</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>number_of_divisions <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">50</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>results_1 <span class="ot">&lt;-</span> <span class="fu">map</span>(number_of_divisions, <span class="cf">function</span>(n) {</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  outcomes_1 <span class="ot">&lt;-</span> <span class="fu">map_lgl</span>(<span class="dv">1</span><span class="sc">:</span>n_cells, <span class="cf">function</span>(x) {</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">has_mutation_after_divisions</span>(<span class="at">n_divisions =</span> n, <span class="at">prob =</span> prob_1)})</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">divisions_1 =</span> n, <span class="at">prob_mutated_1 =</span> <span class="fu">mean</span>(outcomes_1))</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>}) <span class="sc">|&gt;</span> <span class="fu">list_rbind</span>()</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>results_1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 50 × 2
+   divisions_1 prob_mutated_1
+         &lt;int&gt;          &lt;dbl&gt;
+ 1           1         0.0104
+ 2           2         0.0204
+ 3           3         0.0296
+ 4           4         0.0379
+ 5           5         0.0481
+ 6           6         0.0566
+ 7           7         0.0696
+ 8           8         0.0764
+ 9           9         0.0876
+10          10         0.0911
+# ℹ 40 more rows</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(results_1, <span class="fu">aes</span>(<span class="at">x =</span> divisions_1, <span class="at">y =</span> prob_mutated_1 <span class="sc">*</span> <span class="dv">100</span>)) <span class="sc">+</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">100</span>)) <span class="sc">+</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Probability a cell lineage has at least one mutation"</span>,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Mutation probability of 1% per division for 10000 starting cells"</span>,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Number of mitotic divisions"</span>,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="cn">NULL</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="simulation_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Wow. That’s a lot of accumulated mutations! Luckily, our cells do not have a 1% chance of accumulating a meaningful, harmful, and disruptive mutation each time they divide (if they did, we likely wouldn’t exist). Let’s use a more biologically relevant proportion of mutation.</p>
+<p>I’ll model a 1e-6 per-division probability that a daughter cell acquires a mutation that is not just silent, but actually alters fitness in a biologically meaningful way. This is a reasonable number, modeling a mutation in any meaningful, harmful mutation across a panel of key genes/pathways.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">4747</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>prob_2 <span class="ot">&lt;-</span> <span class="fl">1e-6</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>n_cells <span class="ot">&lt;-</span> <span class="dv">10000</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>number_of_divisions <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">50</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>results_2 <span class="ot">&lt;-</span> <span class="fu">map</span>(number_of_divisions, <span class="cf">function</span>(n) {</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  outcomes_2 <span class="ot">&lt;-</span> <span class="fu">map_lgl</span>(<span class="dv">1</span><span class="sc">:</span>n_cells, <span class="cf">function</span>(x) {</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">has_mutation_after_divisions</span>(<span class="at">n_divisions =</span> n, <span class="at">prob =</span> prob_2)})</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">divisions_2 =</span> n, <span class="at">prob_mutated_2 =</span> <span class="fu">mean</span>(outcomes_2))</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>}) <span class="sc">|&gt;</span> <span class="fu">list_rbind</span>()</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>results_2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 50 × 2
+   divisions_2 prob_mutated_2
+         &lt;int&gt;          &lt;dbl&gt;
+ 1           1              0
+ 2           2              0
+ 3           3              0
+ 4           4              0
+ 5           5              0
+ 6           6              0
+ 7           7              0
+ 8           8              0
+ 9           9              0
+10          10              0
+# ℹ 40 more rows</code></pre>
+</div>
+</div>
+<p>Looking at the above data frame, we know these mutation frequencies will be close to zero. So, I will zoom in on the graph to see the actual trend (i.e, the y-axis here will not go from 0 to 100).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(results_2, <span class="fu">aes</span>(<span class="at">x =</span> divisions_2, <span class="at">y =</span> prob_mutated_2)) <span class="sc">+</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Probability a cell lineage has at least one mutation"</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Mutation probability of 0.0001% per division for 10000 starting cells"</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Number of mitotic divisions"</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="cn">NULL</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="simulation_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This is very close to 0. And that’s a good thing! Most cell divisions faithfully copy DNA with no meaningful changes. Once in tens of thousands or millions of divisions, a driver mutation pops up — a mutation that actually changes cell fitness and can lead to downstream problems. That rare event can seed a clone that can later expand, but the initial occurrence is tremendously rare, as shown above.</p>
+</section>
+<section id="thats-it" class="level1">
+<h1>That’s it!</h1>
+<p>Thanks for joining me on my first simulation today! That was a lot of fun.</p>
 
 
 </section>

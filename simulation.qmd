@@ -1,5 +1,5 @@
 ---
-title: "simulation"
+title: "Simulation"
 format: html
 ---
 
@@ -12,6 +12,9 @@ Today, my goal is to simulate probabilities related to the accumulation of genet
 To begin, I will set up a function to detect mutations. To do this, I will write a function with two inputs, one being the number of divisions, n_divisions, that we can model the cell dividing n times, and the second being prob, the probability of a mutation occuring at each division. For each division, I will generate a random uniform number between 0 and 1 with runif(). Then, I will compare this number with the probability value, prob, and say that there was a mutation if the random uniform number generated at that division is < the probability that there is a mutation at that division. This will create a logical vector. If the sum of this logical vector is greater than 0, then there is a mutation in that simulated lineage.
 
 ```{r}
+#| message: false
+#| warning: false
+library(tidyverse)
 set.seed(4747)
 
 has_mutation_after_divisions <- function(n_divisions, prob){
@@ -22,21 +25,19 @@ has_mutation_after_divisions <- function(n_divisions, prob){
 }
 ```
 
-The above logic can be used to continue simulating on larger numbers of lineages. To start, we will simulate the probability of 0.001, meaning a 0.1% chance that each cell division has a 0.1% chance of generating a new mutation that persists in the lineage. I will also start with 10000 cells to simulate per division count. I will simulate these 10000 cells to go through 50 cell divisions. I will then use map() piped into list_rbind() to create a data frame that has two columns: divisions, meaning the number of cell divisions each lineage undergoes, and prob_mutated, the probability that at least one lineage has accumulated a mutation. The inner map_lgl() simulates n_cells cells going through the divisions, and suns the has_mutation_after_divisions() function defined above on each cell lineage. This inner map_lgl() function returns TRUE if a lineage picked up at least one mutation, and returns FALSE otherwise. The final tibble() summarize the results for each of the 10000 cells after each division cycle, and calculates the proportion of TRUE values after that division cycle. The final pipe into list_rbind() gives us a final data frame of the proportion of lineages that have a mutation after each division. 
+The above logic can be used to continue simulating on larger numbers of lineages. To start, we will simulate the probability of 0.001, meaning a 0.1% chance that each cell division has a 0.1% chance of generating a new mutation that persists in the lineage. I will also start with 10000 cells to simulate per division count. I will simulate these 10000 cells to go through 50 cell divisions. I will then use map() piped into list_rbind() to create a data frame that has two columns: divisions, meaning the number of cell divisions each lineage undergoes, and prob_mutated, the probability that at least one lineage has accumulated a mutation. The inner map_lgl() simulates n_cells cells going through the divisions, and sums the has_mutation_after_divisions() function defined above on each cell lineage. This inner map_lgl() function returns TRUE if a lineage picked up at least one mutation, and returns FALSE otherwise. The final tibble() summarize the results for each of the 10000 cells after each division cycle, and calculates the proportion of TRUE values after that division cycle. The final pipe into list_rbind() gives us a final data frame of the proportion of lineages that have a mutation after each division. 
 
 ```{r}
 #| message: false
 #| warning: false
-library(tidyverse)
-
 set.seed(4747)
-prob <- 0.001
+prob_0 <- 0.001
 n_cells <- 10000
 number_of_divisions <- 1:50
 
 results <- map(number_of_divisions, function(n) {
   outcomes <- map_lgl(1:n_cells, function(x) {
-    has_mutation_after_divisions(n_divisions = n, prob = prob)})
+    has_mutation_after_divisions(n_divisions = n, prob = prob_0)})
   tibble(divisions = n, prob_mutated = mean(outcomes))
 }) |> list_rbind()
 
@@ -48,17 +49,84 @@ results
 
 Let's visualize what this data frame looks like graphically as mutations are accumulated across the simulated cell populations. 
 ```{r}
-ggplot(results, aes(x = divisions, y = prob_mutated)) +
+ggplot(results, aes(x = divisions, y = prob_mutated * 100)) +
+  geom_line() +
+  geom_point() +
+  scale_y_continuous(limits = c(0, 100)) +
+  labs(
+    title = "Probability a cell lineage has at least one mutation",
+    subtitle = "Mutation probability of 0.1% per division for 10,000 starting cells",
+    x = "Number of mitotic divisions",
+    y = "Lineages with ≥1 mutation (%)"
+  )
+```
+
+Let's check how this plot changes with a a higher frequency of mutation, say a 1% chance of a mutation each cell division.
+
+```{r}
+set.seed(4747)
+prob_1 <- 0.01
+n_cells <- 10000
+number_of_divisions <- 1:50
+
+results_1 <- map(number_of_divisions, function(n) {
+  outcomes_1 <- map_lgl(1:n_cells, function(x) {
+    has_mutation_after_divisions(n_divisions = n, prob = prob_1)})
+  tibble(divisions_1 = n, prob_mutated_1 = mean(outcomes_1))
+}) |> list_rbind()
+
+results_1
+```
+
+
+```{r}
+ggplot(results_1, aes(x = divisions_1, y = prob_mutated_1 * 100)) +
+  geom_line() +
+  geom_point() +
+  scale_y_continuous(limits = c(0, 100)) +
+  labs(
+    title = "Probability a cell lineage has at least one mutation",
+    subtitle = "Mutation probability of 1% per division for 10000 starting cells",
+    x = "Number of mitotic divisions",
+    y = NULL
+  ) +
+  theme_minimal(base_size = 14)
+```
+Wow. That's a lot of accumulated mutations! Luckily, our cells do not have a 1% chance of accumulating a meaningful, harmful, and disruptive mutation each time they divide (if they did, we likely wouldn't exist). Let's use a more biologically relevant proportion of mutation. 
+
+I'll model a 1e-6 per-division probability that a daughter cell acquires a mutation that is not just silent, but actually alters fitness in a biologically meaningful way. This is a reasonable number, modeling a mutation in any meaningful, harmful mutation across a panel of key genes/pathways.
+
+```{r}
+set.seed(4747)
+prob_2 <- 1e-6
+n_cells <- 10000
+number_of_divisions <- 1:50
+
+results_2 <- map(number_of_divisions, function(n) {
+  outcomes_2 <- map_lgl(1:n_cells, function(x) {
+    has_mutation_after_divisions(n_divisions = n, prob = prob_2)})
+  tibble(divisions_2 = n, prob_mutated_2 = mean(outcomes_2))
+}) |> list_rbind()
+
+results_2
+```
+
+Looking at the above data frame, we know these mutation frequencies will be close to zero. So, I will zoom in on the graph to see the actual trend (i.e, the y-axis here will not go from 0 to 100).
+```{r}
+ggplot(results_2, aes(x = divisions_2, y = prob_mutated_2)) +
   geom_line() +
   geom_point() +
   labs(
     title = "Probability a cell lineage has at least one mutation",
-    subtitle = "Mutation probability of 0.1% per division for 10000 starting cells",
+    subtitle = "Mutation probability of 0.0001% per division for 10000 starting cells",
     x = "Number of mitotic divisions",
     y = NULL
   ) +
   theme_minimal(base_size = 14)
 ```
 
+This is very close to 0. And that's a good thing! Most cell divisions faithfully copy DNA with no meaningful changes. Once in tens of thousands or millions of divisions, a driver mutation pops up — a mutation that actually changes cell fitness and can lead to downstream problems. That rare event can seed a clone that can later expand, but the initial occurrence is tremendously rare, as shown above. 
 
+# That's it!
 
+Thanks for joining me on my first simulation today! That was a lot of fun. 
