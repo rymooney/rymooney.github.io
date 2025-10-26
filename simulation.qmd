@@ -57,7 +57,7 @@ ggplot(results, aes(x = divisions, y = prob_mutated * 100)) +
     title = "Probability a cell lineage has at least one mutation",
     subtitle = "Mutation probability of 0.1% per division for 10,000 starting cells",
     x = "Number of mitotic divisions",
-    y = "Lineages with ≥1 mutation (%)"
+    y = "Lineages with at least 1 mutation (%)"
   )
 ```
 
