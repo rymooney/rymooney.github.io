@@ -13,7 +13,6 @@ library(tidyverse)
 
 I wanted to explore a simple data set comparing UNESCO world heritage sites in Norway, Denmark, and Sweden. The original data is from [UNESCO](https://whc.unesco.org/en/list) and was downloaded from [TidyTuesday](https://github.com/rfordatascience/tidytuesday/blob/main/data/2024/2024-02-06/readme.md). The data also comes from the {pixarfilms} R package by [Eric Leung](https://github.com/erictleung).
 
-
 ```{r}
 #| message: false
 #| warning: false

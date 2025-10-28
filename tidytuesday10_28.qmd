@@ -1,0 +1,132 @@
+---
+title: "Selected Literary Prizes"
+author: "Ryan Mooney"
+format: html
+---
+
+```{r}
+library(tidyverse)
+library(praise)
+library(shiny)
+library(tidytuesdayR)
+library(ggalluvial)
+#| message: false
+#| warning: false
+
+prizes <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-10-28/prizes.csv') |> 
+  mutate(highest_degree = ifelse(is.na(highest_degree), "unknown", 
+                                 highest_degree)) |> 
+  mutate(highest_degree = forcats::fct_recode(highest_degree,  
+                                 "a none" = "none", "b unknown" = "unknown", 
+                                 "c Diploma" = "Diploma", 
+                                 "d Certificate of Education" = "Certificate of Education", 
+                                 "e Bachelors" = "Bachelors", 
+                                 "f Masters" = "Masters", 
+                                 "g Juris Doctor" = "Juris Doctor", 
+                                 "h MD" = "MD", 
+                                 "i Doctorate" = "Doctorate",
+                                 "j Postgraduate" = "Postgraduate"))
+```
+We are going to make a sankey plot.
+
+
+```{r}
+booker <- prizes |>
+  filter(prize_name == "Booker Prize") |>
+  ggsankey::make_long(gender, ethnicity_macro, highest_degree) 
+
+booker
+```
+
+```{r}
+library(ggsankey)
+  
+p1 <- ggplot(booker, aes(x = x, next_x = next_x, 
+                node = node, next_node = next_node, 
+                fill = factor(node), label = node)) +
+  geom_sankey(flow.alpha = 0.6, node.color = "gray30") +
+  geom_sankey_label(size = 3, color = "white", fill = "gray40") +
+  scale_fill_viridis_d() +
+  theme_sankey(base_size = 18) +
+  labs(x = NULL,
+       title = "Booker Prize") +
+  theme(legend.position = "none",
+        plot.title = element_text(hjust = .5))
+```
+
+
+
+```{r}
+bailey <- prizes |>
+  filter(prize_name == "Baillie Gifford Prize for Non-Fiction") |>
+  ggsankey::make_long(gender, ethnicity_macro, highest_degree) 
+
+bailey
+```
+
+```{r}
+p2 <- ggplot(bailey, aes(x = x, next_x = next_x, 
+                node = node, next_node = next_node, 
+                fill = factor(node), label = node)) +
+  geom_sankey(flow.alpha = 0.6, node.color = "gray30") +
+  geom_sankey_label(size = 3, color = "white", fill = "gray40") +
+  scale_fill_viridis_d() +
+  theme_sankey(base_size = 18) +
+  labs(x = NULL,
+       title = "Baillie Gifford Prize for Non-Fiction") +
+  theme(legend.position = "none",
+        plot.title = element_text(hjust = .5))
+```
+
+
+```{r}
+james <- prizes |>
+  filter(prize_name == "James Tait Black Prize for Fiction") |>
+  ggsankey::make_long(gender, ethnicity_macro, highest_degree) 
+
+p3 <- ggplot(james, aes(x = x, next_x = next_x, 
+                node = node, next_node = next_node, 
+                fill = factor(node), label = node)) +
+  geom_sankey(flow.alpha = 0.6, node.color = "gray30") +
+  geom_sankey_label(size = 3, color = "white", fill = "gray40") +
+  scale_fill_viridis_d() +
+  theme_sankey(base_size = 18) +
+  labs(x = NULL,
+       title = "James Tait Black Prize for Fiction") +
+  theme(legend.position = "none",
+        plot.title = element_text(hjust = .5))
+```
+
+```{r}
+science <- prizes |>
+  filter(prize_name == "BSFA Award for Best Novel") |>
+  ggsankey::make_long(gender, ethnicity_macro, highest_degree) 
+
+p4 <- ggplot(science, aes(x = x, next_x = next_x, 
+                node = node, next_node = next_node, 
+                fill = factor(node), label = node)) +
+  geom_sankey(flow.alpha = 0.6, node.color = "gray30") +
+  geom_sankey_label(size = 3, color = "white", fill = "gray40") +
+  scale_fill_viridis_d() +
+  theme_sankey(base_size = 18) +
+  labs(x = NULL,
+       title = "BSFA Award for Best Novel") +
+  theme(legend.position = "none",
+        plot.title = element_text(hjust = .5))
+```
+
+```{r}
+p1
+```
+```{r}
+p2
+```
+```{r}
+p3
+```
+```{r}
+p4
+```
+
+
+
