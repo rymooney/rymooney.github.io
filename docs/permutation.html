@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Ryan Mooney">
 
-<title>Data Viz – Ryan Mooney</title>
+<title>Permutation Test – Ryan Mooney</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -126,7 +162,7 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Text Analysis</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./permutation.html"> 
+    <a class="nav-link active" href="./permutation.html" aria-current="page"> 
 <span class="menu-text">Permutation Test</span></a>
   </li>  
 </ul>
@@ -140,21 +176,35 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-task" id="toc-the-task" class="nav-link active" data-scroll-target="#the-task">The Task</a></li>
+  <li><a href="#the-hypotheses" id="toc-the-hypotheses" class="nav-link" data-scroll-target="#the-hypotheses">The Hypotheses</a></li>
+  <li><a href="#the-permutation-test" id="toc-the-permutation-test" class="nav-link" data-scroll-target="#the-permutation-test">The permutation test</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page" id="quarto-document-content">
+<main class="content column-page-left" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Data Viz</h1>
+<h1 class="title">Permutation Test</h1>
 </div>
 
 
 
-<div class="quarto-title-meta column-page">
+<div class="quarto-title-meta column-page-left">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Ryan Mooney </p>
+          </div>
+  </div>
     
   
     
@@ -165,9 +215,169 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>This is my data visualization page, where I upload my data visualizations done on TidyTuesday data.</p>
+<section id="the-task" class="level1">
+<h1>The Task</h1>
+<p>Today, I will be running a permutation test using a data set from William Wolberg, Olvi Mangasarian. Nick Street, and W. Street in their paper <a href="https://minds.wisconsin.edu/bitstream/handle/1793/59692/TR1131.pdf;jsessionid=D67421CDB9C9D60F48E00CFD511DD259?sequence=1">“Nuclear feature extraction for breast tumor diagnosis” 1993 Published in Electronic imaging</a>. The dataset was downloaded from <a href="https://archive.ics.uci.edu/dataset/17/breast%2Bcancer%2Bwisconsin%2Bdiagnostic?utm_source=chatgpt.com">UC Irvine Machine Learning Repository</a>. The goal is to look at whether there is a correlation between diagnosis of a tumor and tumor size.</p>
+<p>#The Data The data set compiled many features that were computed from a digitized image of a fine needle aspirate (FNA) of 529 breast masses. They recorded the following data:</p>
+<ol type="1">
+<li>ID number</li>
+<li>Diagnosis (M = malignant, B = benign)</li>
+</ol>
+<p>Ten real-valued features are computed for each cell nucleus:</p>
+<pre><code>a) radius (mean of distances from center to points on the perimeter)
+b) texture (standard deviation of gray-scale values)
+c) perimeter
+d) area
+e) smoothness (local variation in radius lengths)
+f) compactness (perimeter^2 / area - 1.0)
+g) concavity (severity of concave portions of the contour)
+h) concave points (number of concave portions of the contour)
+i) symmetry 
+j) fractal dimension ("coastline approximation" - 1)</code></pre>
+<p>They provide standard errors and the “worst”, or the most extreme, value for each of the variables for each sample.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>tumor_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"wdbc.data"</span>, <span class="at">col_names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(tumor_data) <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"id"</span>, <span class="st">"diagnosis"</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"radius_mean"</span>, <span class="st">"texture_mean"</span>, <span class="st">"perimeter_mean"</span>, <span class="st">"area_mean"</span>, <span class="st">"smoothness_mean"</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"compactness_mean"</span>, <span class="st">"concavity_mean"</span>, <span class="st">"concave_points_mean"</span>, <span class="st">"symmetry_mean"</span>, <span class="st">"fractal_dimension_mean"</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"radius_se"</span>, <span class="st">"texture_se"</span>, <span class="st">"perimeter_se"</span>, <span class="st">"area_se"</span>, <span class="st">"smoothness_se"</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"compactness_se"</span>, <span class="st">"concavity_se"</span>, <span class="st">"concave_points_se"</span>, <span class="st">"symmetry_se"</span>, <span class="st">"fractal_dimension_se"</span>,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">"radius_worst"</span>, <span class="st">"texture_worst"</span>, <span class="st">"perimeter_worst"</span>, <span class="st">"area_worst"</span>, <span class="st">"smoothness_worst"</span>,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="st">"compactness_worst"</span>, <span class="st">"concavity_worst"</span>, <span class="st">"concave_points_worst"</span>, <span class="st">"symmetry_worst"</span>, <span class="st">"fractal_dimension_worst"</span>)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>tumor_data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 569 × 32
+         id diagnosis radius_mean texture_mean perimeter_mean area_mean
+      &lt;dbl&gt; &lt;chr&gt;           &lt;dbl&gt;        &lt;dbl&gt;          &lt;dbl&gt;     &lt;dbl&gt;
+ 1   842302 M                18.0         10.4          123.      1001 
+ 2   842517 M                20.6         17.8          133.      1326 
+ 3 84300903 M                19.7         21.2          130       1203 
+ 4 84348301 M                11.4         20.4           77.6      386.
+ 5 84358402 M                20.3         14.3          135.      1297 
+ 6   843786 M                12.4         15.7           82.6      477.
+ 7   844359 M                18.2         20.0          120.      1040 
+ 8 84458202 M                13.7         20.8           90.2      578.
+ 9   844981 M                13           21.8           87.5      520.
+10 84501001 M                12.5         24.0           84.0      476.
+# ℹ 559 more rows
+# ℹ 26 more variables: smoothness_mean &lt;dbl&gt;, compactness_mean &lt;dbl&gt;,
+#   concavity_mean &lt;dbl&gt;, concave_points_mean &lt;dbl&gt;, symmetry_mean &lt;dbl&gt;,
+#   fractal_dimension_mean &lt;dbl&gt;, radius_se &lt;dbl&gt;, texture_se &lt;dbl&gt;,
+#   perimeter_se &lt;dbl&gt;, area_se &lt;dbl&gt;, smoothness_se &lt;dbl&gt;,
+#   compactness_se &lt;dbl&gt;, concavity_se &lt;dbl&gt;, concave_points_se &lt;dbl&gt;,
+#   symmetry_se &lt;dbl&gt;, fractal_dimension_se &lt;dbl&gt;, radius_worst &lt;dbl&gt;, …</code></pre>
+</div>
+</div>
+</section>
+<section id="the-hypotheses" class="level1">
+<h1>The Hypotheses</h1>
+<p>Today, I will be investigating the relationship between two variables: diagnosis (whether the tumor is malignant or benign) and tumor area. These variables are interesting because malignancy and benign tumors have different characteristics: malignant tumors are cancerous, they grow uncontrollably, invade nearby tissues, and can spread to other parts of the body, and benign tumors are non-cancerous slow-growing, don’t invade surrounding tissue, and are often treatable or harmless. Looking at cell area (and other variables) is interesting because it could give insight into which features can best be used to predict malignancy. The null hypothesis is that benign tumors and malignant tumors have cells of the same average area. The alternative hypothesis is that malignant tumors have larger average cell areas.</p>
+<p>The statistic to test this difference will be difference in means between area in the benign and malignant tumor samples.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>tumor_data <span class="sc">|&gt;</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(diagnosis) <span class="sc">|&gt;</span> </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">ave_area =</span> <span class="fu">mean</span>(area_mean))<span class="sc">|&gt;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">diagnosis =</span> <span class="fu">factor</span>(diagnosis, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"B"</span>, <span class="st">"M"</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  diagnosis ave_area
+  &lt;fct&gt;        &lt;dbl&gt;
+1 B             463.
+2 M             978.</code></pre>
+</div>
+</div>
+<p>Here is a visual of the original relationship in the data.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>tumor_data <span class="sc">|&gt;</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> diagnosis, <span class="at">y =</span> area_mean)) <span class="sc">+</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="permutation_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>So, it looks like the mean area of malignant tumor cells is larger than that of benign tumor cells. However, is that generalizable to other breast tumors? Off to the permutation test!</p>
+</section>
+<section id="the-permutation-test" class="level1">
+<h1>The permutation test</h1>
+<p>To start, I will generate a null sample distribution.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>perm_data <span class="ot">&lt;-</span> <span class="cf">function</span>(rep, data) {</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  data <span class="sc">|&gt;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(diagnosis, area_mean) <span class="sc">|&gt;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">area_perm =</span> <span class="fu">sample</span>(area_mean, <span class="at">replace =</span> <span class="cn">FALSE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(diagnosis) <span class="sc">|&gt;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">obs_mean  =</span> <span class="fu">mean</span>(area_mean),</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">perm_mean =</span> <span class="fu">mean</span>(area_perm),</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">obs_mean_diff  =</span> <span class="fu">diff</span>(obs_mean),</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">perm_mean_diff =</span> <span class="fu">diff</span>(perm_mean),</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">rep =</span> rep</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="fu">map</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10000</span>), perm_data, <span class="at">data =</span> tumor_data) <span class="sc">|&gt;</span> </span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list_rbind</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10,000 × 3
+   obs_mean_diff perm_mean_diff   rep
+           &lt;dbl&gt;          &lt;dbl&gt; &lt;int&gt;
+ 1          516.          19.1      1
+ 2          516.         -18.6      2
+ 3          516.         -26.9      3
+ 4          516.          -6.41     4
+ 5          516.          40.1      5
+ 6          516.          11.7      6
+ 7          516.          52.0      7
+ 8          516.          84.1      8
+ 9          516.         -10.5      9
+10          516.           5.07    10
+# ℹ 9,990 more rows</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">47</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>perm_stats <span class="ot">&lt;-</span> </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10000</span>), perm_data, <span class="at">data =</span> tumor_data) <span class="sc">|&gt;</span> </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list_rbind</span>() </span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>perm_stats <span class="sc">|&gt;</span> </span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> perm_mean_diff)) <span class="sc">+</span> </span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">5</span>) <span class="sc">+</span> </span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> obs_mean_diff), <span class="at">color =</span> <span class="st">"red"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="permutation_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>perm_stats <span class="sc">|&gt;</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">p_val =</span> <span class="fu">mean</span>(perm_mean_diff <span class="sc">&gt;</span> obs_mean_diff))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+  p_val
+  &lt;dbl&gt;
+1     0</code></pre>
+</div>
+</div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
