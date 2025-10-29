@@ -16,10 +16,13 @@ website:
             href: pixar.qmd
           - text: "UNESCO World Heritage Sites"
             href: UNESCO.qmd
+          - text: "Selected Literary Prizes"
+            href: tidytuesday10_28.qmd
       - href: TextAnalysis.qmd
         text: Text Analysis
       - href: simulation.qmd
         text: "Simulating Mutations"
+      
             
   page-footer: 
     background: light 
