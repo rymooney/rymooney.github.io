@@ -238,35 +238,37 @@ j) fractal dimension ("coastline approximation" - 1)</code></pre>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>tumor_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"wdbc.data"</span>, <span class="at">col_names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(tumor_data) <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"id"</span>, <span class="st">"diagnosis"</span>,</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"radius_mean"</span>, <span class="st">"texture_mean"</span>, <span class="st">"perimeter_mean"</span>, <span class="st">"area_mean"</span>, <span class="st">"smoothness_mean"</span>,</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"compactness_mean"</span>, <span class="st">"concavity_mean"</span>, <span class="st">"concave_points_mean"</span>, <span class="st">"symmetry_mean"</span>, <span class="st">"fractal_dimension_mean"</span>,</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"radius_se"</span>, <span class="st">"texture_se"</span>, <span class="st">"perimeter_se"</span>, <span class="st">"area_se"</span>, <span class="st">"smoothness_se"</span>,</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"compactness_se"</span>, <span class="st">"concavity_se"</span>, <span class="st">"concave_points_se"</span>, <span class="st">"symmetry_se"</span>, <span class="st">"fractal_dimension_se"</span>,</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">"radius_worst"</span>, <span class="st">"texture_worst"</span>, <span class="st">"perimeter_worst"</span>, <span class="st">"area_worst"</span>, <span class="st">"smoothness_worst"</span>,</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="st">"compactness_worst"</span>, <span class="st">"concavity_worst"</span>, <span class="st">"concave_points_worst"</span>, <span class="st">"symmetry_worst"</span>, <span class="st">"fractal_dimension_worst"</span>)</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>tumor_data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>tumor_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"wdbc.data"</span>))</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(tumor_data) <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"id"</span>, <span class="st">"diagnosis"</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"radius_mean"</span>, <span class="st">"texture_mean"</span>, <span class="st">"perimeter_mean"</span>, <span class="st">"area_mean"</span>, <span class="st">"smoothness_mean"</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"compactness_mean"</span>, <span class="st">"concavity_mean"</span>, <span class="st">"concave_points_mean"</span>, <span class="st">"symmetry_mean"</span>, <span class="st">"fractal_dimension_mean"</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">"radius_se"</span>, <span class="st">"texture_se"</span>, <span class="st">"perimeter_se"</span>, <span class="st">"area_se"</span>, <span class="st">"smoothness_se"</span>,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">"compactness_se"</span>, <span class="st">"concavity_se"</span>, <span class="st">"concave_points_se"</span>, <span class="st">"symmetry_se"</span>, <span class="st">"fractal_dimension_se"</span>,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="st">"radius_worst"</span>, <span class="st">"texture_worst"</span>, <span class="st">"perimeter_worst"</span>, <span class="st">"area_worst"</span>, <span class="st">"smoothness_worst"</span>,</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="st">"compactness_worst"</span>, <span class="st">"concavity_worst"</span>, <span class="st">"concave_points_worst"</span>, <span class="st">"symmetry_worst"</span>, <span class="st">"fractal_dimension_worst"</span>)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>tumor_data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 569 × 32
+<pre><code># A tibble: 568 × 32
          id diagnosis radius_mean texture_mean perimeter_mean area_mean
       &lt;dbl&gt; &lt;chr&gt;           &lt;dbl&gt;        &lt;dbl&gt;          &lt;dbl&gt;     &lt;dbl&gt;
- 1   842302 M                18.0         10.4          123.      1001 
- 2   842517 M                20.6         17.8          133.      1326 
- 3 84300903 M                19.7         21.2          130       1203 
- 4 84348301 M                11.4         20.4           77.6      386.
- 5 84358402 M                20.3         14.3          135.      1297 
- 6   843786 M                12.4         15.7           82.6      477.
- 7   844359 M                18.2         20.0          120.      1040 
- 8 84458202 M                13.7         20.8           90.2      578.
- 9   844981 M                13           21.8           87.5      520.
-10 84501001 M                12.5         24.0           84.0      476.
-# ℹ 559 more rows
+ 1   842517 M                20.6         17.8          133.      1326 
+ 2 84300903 M                19.7         21.2          130       1203 
+ 3 84348301 M                11.4         20.4           77.6      386.
+ 4 84358402 M                20.3         14.3          135.      1297 
+ 5   843786 M                12.4         15.7           82.6      477.
+ 6   844359 M                18.2         20.0          120.      1040 
+ 7 84458202 M                13.7         20.8           90.2      578.
+ 8   844981 M                13           21.8           87.5      520.
+ 9 84501001 M                12.5         24.0           84.0      476.
+10   845636 M                16.0         23.2          103.       798.
+# ℹ 558 more rows
 # ℹ 26 more variables: smoothness_mean &lt;dbl&gt;, compactness_mean &lt;dbl&gt;,
 #   concavity_mean &lt;dbl&gt;, concave_points_mean &lt;dbl&gt;, symmetry_mean &lt;dbl&gt;,
 #   fractal_dimension_mean &lt;dbl&gt;, radius_se &lt;dbl&gt;, texture_se &lt;dbl&gt;,
@@ -334,16 +336,16 @@ j) fractal dimension ("coastline approximation" - 1)</code></pre>
 <pre><code># A tibble: 10,000 × 3
    obs_mean_diff perm_mean_diff   rep
            &lt;dbl&gt;          &lt;dbl&gt; &lt;int&gt;
- 1          516.           6.31     1
- 2          516.         -12.9      2
- 3          516.          48.4      3
- 4          516.          57.2      4
- 5          516.          13.7      5
- 6          516.           9.75     6
- 7          516.          18.0      7
- 8          516.         -16.4      8
- 9          516.          30.4      9
-10          516.         -18.9     10
+ 1          515.          30.5      1
+ 2          515.         -12.6      2
+ 3          515.         -58.4      3
+ 4          515.          15.2      4
+ 5          515.         -34.7      5
+ 6          515.         -40.1      6
+ 7          515.           5.15     7
+ 8          515.         -46.0      8
+ 9          515.          27.5      9
+10          515.         -31.0     10
 # ℹ 9,990 more rows</code></pre>
 </div>
 </div>

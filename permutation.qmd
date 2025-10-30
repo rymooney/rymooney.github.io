@@ -33,7 +33,9 @@ They provide standard errors and the "worst", or the most extreme, value for eac
 #| warning: false
 library(tidyverse)
 library(readr)
-tumor_data <- read_csv("wdbc.data", col_names = FALSE)
+library(here)
+
+tumor_data <- read_csv(here("data", "wdbc.data"))
 
 colnames(tumor_data) <- c(
   "id", "diagnosis",
