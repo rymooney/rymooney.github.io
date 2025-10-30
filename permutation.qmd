@@ -75,7 +75,7 @@ So, it looks like the mean area of malignant tumor cells is larger than that of 
 
 # The permutation test
 
-To start, I will generate a null sample distribution to compare the observed data with. This will serve as the basis of the generation of the p-value. 
+To start, I will generate a null sample distribution to compare the observed data with. This will serve as the basis of the generation of the p-value. The map(c(1:1000)) component performs the perm_data function 1000 times to generate a solid null distribution. 
 
 ```{r}
 set.seed(47)

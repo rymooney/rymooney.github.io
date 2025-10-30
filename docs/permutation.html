@@ -316,7 +316,7 @@ j) fractal dimension ("coastline approximation" - 1)</code></pre>
 </section>
 <section id="the-permutation-test" class="level1">
 <h1>The permutation test</h1>
-<p>To start, I will generate a null sample distribution to compare the observed data with. This will serve as the basis of the generation of the p-value.</p>
+<p>To start, I will generate a null sample distribution to compare the observed data with. This will serve as the basis of the generation of the p-value. The map(c(1:1000)) component performs the perm_data function 1000 times to generate a solid null distribution.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">47</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>perm_data <span class="ot">&lt;-</span> <span class="cf">function</span>(rep, data) {</span>
