@@ -182,8 +182,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#the-task" id="toc-the-task" class="nav-link active" data-scroll-target="#the-task">The Task</a></li>
+  <li><a href="#the-data" id="toc-the-data" class="nav-link" data-scroll-target="#the-data">The Data</a></li>
   <li><a href="#the-hypotheses" id="toc-the-hypotheses" class="nav-link" data-scroll-target="#the-hypotheses">The Hypotheses</a></li>
   <li><a href="#the-permutation-test" id="toc-the-permutation-test" class="nav-link" data-scroll-target="#the-permutation-test">The permutation test</a></li>
+  <li><a href="#thats-it" id="toc-thats-it" class="nav-link" data-scroll-target="#thats-it">That’s it!</a></li>
   </ul>
 </nav>
     </div>
@@ -218,7 +220,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="the-task" class="level1">
 <h1>The Task</h1>
 <p>Today, I will be running a permutation test using a data set from William Wolberg, Olvi Mangasarian. Nick Street, and W. Street in their paper <a href="https://minds.wisconsin.edu/bitstream/handle/1793/59692/TR1131.pdf;jsessionid=D67421CDB9C9D60F48E00CFD511DD259?sequence=1">“Nuclear feature extraction for breast tumor diagnosis” 1993 Published in Electronic imaging</a>. The dataset was downloaded from <a href="https://archive.ics.uci.edu/dataset/17/breast%2Bcancer%2Bwisconsin%2Bdiagnostic?utm_source=chatgpt.com">UC Irvine Machine Learning Repository</a>. The goal is to look at whether there is a correlation between diagnosis of a tumor and tumor size.</p>
-<p>#The Data The data set compiled many features that were computed from a digitized image of a fine needle aspirate (FNA) of 529 breast masses. They recorded the following data:</p>
+</section>
+<section id="the-data" class="level1">
+<h1>The Data</h1>
+<p>The data set compiled many features that were computed from a digitized image of a fine needle aspirate (FNA) of 529 breast masses. They recorded the following data:</p>
 <ol type="1">
 <li>ID number</li>
 <li>Diagnosis (M = malignant, B = benign)</li>
@@ -238,9 +243,9 @@ j) fractal dimension ("coastline approximation" - 1)</code></pre>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(praise)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>tumor_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"wdbc.data"</span>))</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>tumor_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/wdbc.data"</span>)</span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(tumor_data) <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"id"</span>, <span class="st">"diagnosis"</span>,</span>
@@ -280,17 +285,16 @@ j) fractal dimension ("coastline approximation" - 1)</code></pre>
 </section>
 <section id="the-hypotheses" class="level1">
 <h1>The Hypotheses</h1>
-<p>Today, I will be investigating the relationship between two variables: diagnosis (whether the tumor is malignant or benign) and tumor area. These variables are interesting because malignancy and benign tumors have different characteristics: malignant tumors are cancerous, they grow uncontrollably, invade nearby tissues, and can spread to other parts of the body, and benign tumors are non-cancerous slow-growing, don’t invade surrounding tissue, and are often treatable or harmless. Looking at cell area (and other variables) is interesting because it could give insight into which features can best be used to predict malignancy. The null hypothesis is that benign tumors and malignant tumors have cells of the same average area. The alternative hypothesis is that malignant tumors have larger average cell areas.</p>
+<p>Today, I will be investigating the relationship between two variables: diagnosis (whether the tumor is malignant or benign) and mean tumor cell area. These variables are interesting because malignancy and benign tumors have different characteristics: malignant tumors are cancerous, they grow uncontrollably, invade nearby tissues, and can spread to other parts of the body, and benign tumors are non-cancerous, slow-growing, don’t invade surrounding tissue, and are typically treatable or harmless. Looking at cell area (and other variables) is interesting because it could give insight into which features can best be used to predict malignancy from small samples of tumor cells. The null hypothesis is that benign tumors and malignant tumors have cells of the same average area. The alternative hypothesis is that malignant tumors have larger average cell areas.</p>
 <p>The statistic to test this difference will be difference in means between area in the benign and malignant tumor samples.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>tumor_data <span class="sc">|&gt;</span> </span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(diagnosis) <span class="sc">|&gt;</span> </span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">ave_area =</span> <span class="fu">mean</span>(area_mean))<span class="sc">|&gt;</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">diagnosis =</span> <span class="fu">factor</span>(diagnosis, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"B"</span>, <span class="st">"M"</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">ave_area =</span> <span class="fu">mean</span>(area_mean))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 2
   diagnosis ave_area
-  &lt;fct&gt;        &lt;dbl&gt;
+  &lt;chr&gt;        &lt;dbl&gt;
 1 B             463.
 2 M             978.</code></pre>
 </div>
@@ -312,17 +316,17 @@ j) fractal dimension ("coastline approximation" - 1)</code></pre>
 </section>
 <section id="the-permutation-test" class="level1">
 <h1>The permutation test</h1>
-<p>To start, I will generate a null sample distribution.</p>
+<p>To start, I will generate a null sample distribution to compare the observed data with. This will serve as the basis of the generation of the p-value.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>perm_data <span class="ot">&lt;-</span> <span class="cf">function</span>(rep, data) {</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  data <span class="sc">|&gt;</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(diagnosis, area_mean) <span class="sc">|&gt;</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">area_perm =</span> <span class="fu">sample</span>(area_mean, <span class="at">replace =</span> <span class="cn">FALSE</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(diagnosis) <span class="sc">|&gt;</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">obs_mean  =</span> <span class="fu">mean</span>(area_mean),</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">perm_mean =</span> <span class="fu">mean</span>(area_perm),</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">47</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>perm_data <span class="ot">&lt;-</span> <span class="cf">function</span>(rep, data) {</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  data <span class="sc">|&gt;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(diagnosis, area_mean) <span class="sc">|&gt;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">area_perm =</span> <span class="fu">sample</span>(area_mean, <span class="at">replace =</span> <span class="cn">FALSE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(diagnosis) <span class="sc">|&gt;</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">obs_mean  =</span> <span class="fu">mean</span>(area_mean),</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">perm_mean =</span> <span class="fu">mean</span>(area_perm)) <span class="sc">|&gt;</span></span>
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(</span>
 <span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">obs_mean_diff  =</span> <span class="fu">diff</span>(obs_mean),</span>
 <span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">perm_mean_diff =</span> <span class="fu">diff</span>(perm_mean),</span>
@@ -330,35 +334,41 @@ j) fractal dimension ("coastline approximation" - 1)</code></pre>
 <span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="fu">map</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10000</span>), perm_data, <span class="at">data =</span> tumor_data) <span class="sc">|&gt;</span> </span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="fu">map</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>), perm_data, <span class="at">data =</span> tumor_data) <span class="sc">|&gt;</span> </span>
 <span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list_rbind</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 10,000 × 3
+<pre><code># A tibble: 1,000 × 3
    obs_mean_diff perm_mean_diff   rep
            &lt;dbl&gt;          &lt;dbl&gt; &lt;int&gt;
- 1          515.          30.5      1
- 2          515.         -12.6      2
- 3          515.         -58.4      3
- 4          515.          15.2      4
- 5          515.         -34.7      5
- 6          515.         -40.1      6
- 7          515.           5.15     7
- 8          515.         -46.0      8
- 9          515.          27.5      9
-10          515.         -31.0     10
-# ℹ 9,990 more rows</code></pre>
+ 1          515.         30.9       1
+ 2          515.        -52.8       2
+ 3          515.         63.0       3
+ 4          515.         24.5       4
+ 5          515.         -4.64      5
+ 6          515.          0.188     6
+ 7          515.         -6.70      7
+ 8          515.          9.85      8
+ 9          515.         45.6       9
+10          515.        -55.7      10
+# ℹ 990 more rows</code></pre>
 </div>
 </div>
+<p>Let’s look at the null sampling distribution and see where our experimental difference in means between malignant and benign tumor area lies.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">47</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>perm_stats <span class="ot">&lt;-</span> </span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10000</span>), perm_data, <span class="at">data =</span> tumor_data) <span class="sc">|&gt;</span> </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>), perm_data, <span class="at">data =</span> tumor_data) <span class="sc">|&gt;</span> </span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list_rbind</span>() </span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>perm_stats <span class="sc">|&gt;</span> </span>
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> perm_mean_diff)) <span class="sc">+</span> </span>
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">5</span>) <span class="sc">+</span> </span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> obs_mean_diff), <span class="at">color =</span> <span class="st">"red"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> obs_mean_diff), <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span> </span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Null sampling distribution"</span>,</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Red line is the observed difference in means"</span>,</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Mean Difference"</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -377,6 +387,11 @@ j) fractal dimension ("coastline approximation" - 1)</code></pre>
 1     0</code></pre>
 </div>
 </div>
+<p>The permutation test yielded a p-value of 0, indicating that the observed difference in mean cell size between malignant and benign breast tumors (515.479) did not occur once in 1,000 random permutations of the data. This extremely small p-value provides very strong evidence against the null hypothesis that benign and malignant tumors have the same average cell size. Thus, I claim that malignant breast cancer cells have higher average sizes than benign cancer cells. This could mean that average cell size could serve as a potential quantitative metric for the rapid and automated classification of tumor malignancy.</p>
+</section>
+<section id="thats-it" class="level1">
+<h1>That’s it!</h1>
+<p>Thanks for coming along for the ride today!</p>
 
 
 </section>

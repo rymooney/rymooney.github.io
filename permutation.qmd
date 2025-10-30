@@ -5,9 +5,11 @@ format: html
 ---
 
 # The Task
+
 Today, I will be running a permutation test using a data set from William Wolberg, Olvi Mangasarian. Nick Street, and W. Street in their paper ["Nuclear feature extraction for breast tumor diagnosis" 1993 Published in Electronic imaging](https://minds.wisconsin.edu/bitstream/handle/1793/59692/TR1131.pdf;jsessionid=D67421CDB9C9D60F48E00CFD511DD259?sequence=1). The dataset was downloaded from [UC Irvine Machine Learning Repository](https://archive.ics.uci.edu/dataset/17/breast%2Bcancer%2Bwisconsin%2Bdiagnostic?utm_source=chatgpt.com). The goal is to look at whether there is a correlation between diagnosis of a tumor and tumor size. 
 
-#The Data
+# The Data
+
 The data set compiled many features that were computed from a digitized image of a fine needle aspirate (FNA) of 529 breast masses. They recorded the following data:
 
 1) ID number
@@ -33,9 +35,9 @@ They provide standard errors and the "worst", or the most extreme, value for eac
 #| warning: false
 library(tidyverse)
 library(readr)
-library(here)
+library(praise)
 
-tumor_data <- read_csv(here("data", "wdbc.data"))
+tumor_data <- read_csv("data/wdbc.data")
 
 colnames(tumor_data) <- c(
   "id", "diagnosis",
@@ -53,15 +55,14 @@ tumor_data
 
 # The Hypotheses
 
-Today, I will be investigating the relationship between two variables: diagnosis (whether the tumor is malignant or benign) and tumor area. These variables are interesting because malignancy and benign tumors have different characteristics: malignant tumors are cancerous, they grow uncontrollably, invade nearby tissues, and can spread to other parts of the body, and benign tumors are non-cancerous slow-growing, don’t invade surrounding tissue, and are often treatable or harmless. Looking at cell area (and other variables) is interesting because it could give insight into which features can best be used to predict malignancy. The null hypothesis is that benign tumors and malignant tumors have cells of the same average area. The alternative hypothesis is that malignant tumors have larger average cell areas. 
+Today, I will be investigating the relationship between two variables: diagnosis (whether the tumor is malignant or benign) and mean tumor cell area. These variables are interesting because malignancy and benign tumors have different characteristics: malignant tumors are cancerous, they grow uncontrollably, invade nearby tissues, and can spread to other parts of the body, and benign tumors are non-cancerous, slow-growing, don’t invade surrounding tissue, and are typically treatable or harmless. Looking at cell area (and other variables) is interesting because it could give insight into which features can best be used to predict malignancy from small samples of tumor cells. The null hypothesis is that benign tumors and malignant tumors have cells of the same average area. The alternative hypothesis is that malignant tumors have larger average cell areas. 
 
 The statistic to test this difference will be difference in means between area in the benign and malignant tumor samples. 
 
 ```{r}
 tumor_data |> 
   group_by(diagnosis) |> 
-  summarize(ave_area = mean(area_mean))|>
-  mutate(diagnosis = factor(diagnosis, levels = c("B", "M")))
+  summarize(ave_area = mean(area_mean))
 ```
 Here is a visual of the original relationship in the data.
 
@@ -74,9 +75,10 @@ So, it looks like the mean area of malignant tumor cells is larger than that of 
 
 # The permutation test
 
-To start, I will generate a null sample distribution. 
+To start, I will generate a null sample distribution to compare the observed data with. This will serve as the basis of the generation of the p-value. 
 
 ```{r}
+set.seed(47)
 perm_data <- function(rep, data) {
   data |>
     select(diagnosis, area_mean) |>
@@ -84,8 +86,7 @@ perm_data <- function(rep, data) {
     group_by(diagnosis) |>
     summarize(
       obs_mean  = mean(area_mean),
-      perm_mean = mean(area_perm),
-      .groups = "drop") |>
+      perm_mean = mean(area_perm)) |>
     summarize(
       obs_mean_diff  = diff(obs_mean),
       perm_mean_diff = diff(perm_mean),
@@ -93,24 +94,37 @@ perm_data <- function(rep, data) {
     )
 }
 
-map(c(1:10000), perm_data, data = tumor_data) |> 
+map(c(1:1000), perm_data, data = tumor_data) |> 
   list_rbind()
 ```
+
+Let's look at the null sampling distribution and see where our experimental difference in means between malignant and benign tumor area lies. 
 
 ```{r}
 set.seed(47)
 perm_stats <- 
-  map(c(1:10000), perm_data, data = tumor_data) |> 
+  map(c(1:1000), perm_data, data = tumor_data) |> 
   list_rbind() 
 
 perm_stats |> 
   ggplot(aes(x = perm_mean_diff)) + 
   geom_histogram(binwidth = 5) + 
-  geom_vline(aes(xintercept = obs_mean_diff), color = "red")
+  geom_vline(aes(xintercept = obs_mean_diff), color = "red") + 
+  labs(
+    title = "Null sampling distribution",
+    subtitle = "Red line is the observed difference in means",
+    x = "Mean Difference"
+  )
 ```
+
 ```{r}
 perm_stats |> 
     summarize(p_val = mean(perm_mean_diff > obs_mean_diff))
 ```
+
+The permutation test yielded a p-value of 0, indicating that the observed difference in mean cell size between malignant and benign breast tumors (515.479) did not occur once in 1,000 random permutations of the data. This extremely small p-value provides very strong evidence against the null hypothesis that benign and malignant tumors have the same average cell size. Thus, I claim that malignant breast cancer cells have higher average sizes than benign cancer cells. This could mean that average cell size could serve as a potential quantitative metric for the rapid and automated classification of tumor malignancy.
+
+# That's it!
+Thanks for coming along for the ride today!
 
 
