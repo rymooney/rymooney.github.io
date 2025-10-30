@@ -1,0 +1,116 @@
+---
+title: "Permutation Test"
+author: "Ryan Mooney"
+format: html
+---
+
+# The Task
+Today, I will be running a permutation test using a data set from William Wolberg, Olvi Mangasarian. Nick Street, and W. Street in their paper ["Nuclear feature extraction for breast tumor diagnosis" 1993 Published in Electronic imaging](https://minds.wisconsin.edu/bitstream/handle/1793/59692/TR1131.pdf;jsessionid=D67421CDB9C9D60F48E00CFD511DD259?sequence=1). The dataset was downloaded from [UC Irvine Machine Learning Repository](https://archive.ics.uci.edu/dataset/17/breast%2Bcancer%2Bwisconsin%2Bdiagnostic?utm_source=chatgpt.com). The goal is to look at whether there is a correlation between diagnosis of a tumor and tumor size. 
+
+#The Data
+The data set compiled many features that were computed from a digitized image of a fine needle aspirate (FNA) of 529 breast masses. They recorded the following data:
+
+1) ID number
+2) Diagnosis (M = malignant, B = benign)
+
+Ten real-valued features are computed for each cell nucleus:
+
+	a) radius (mean of distances from center to points on the perimeter)
+	b) texture (standard deviation of gray-scale values)
+	c) perimeter
+	d) area
+	e) smoothness (local variation in radius lengths)
+	f) compactness (perimeter^2 / area - 1.0)
+	g) concavity (severity of concave portions of the contour)
+	h) concave points (number of concave portions of the contour)
+	i) symmetry 
+	j) fractal dimension ("coastline approximation" - 1)
+	
+They provide standard errors and the "worst", or the most extreme, value for each of the variables for each sample. 
+
+```{r}
+#| message: false
+#| warning: false
+library(tidyverse)
+library(readr)
+library(here)
+
+tumor_data <- read_csv(here("data", "wdbc.data"))
+
+colnames(tumor_data) <- c(
+  "id", "diagnosis",
+  "radius_mean", "texture_mean", "perimeter_mean", "area_mean", "smoothness_mean",
+  "compactness_mean", "concavity_mean", "concave_points_mean", "symmetry_mean", "fractal_dimension_mean",
+  
+  "radius_se", "texture_se", "perimeter_se", "area_se", "smoothness_se",
+  "compactness_se", "concavity_se", "concave_points_se", "symmetry_se", "fractal_dimension_se",
+  
+  "radius_worst", "texture_worst", "perimeter_worst", "area_worst", "smoothness_worst",
+  "compactness_worst", "concavity_worst", "concave_points_worst", "symmetry_worst", "fractal_dimension_worst")
+
+tumor_data
+```
+
+# The Hypotheses
+
+Today, I will be investigating the relationship between two variables: diagnosis (whether the tumor is malignant or benign) and tumor area. These variables are interesting because malignancy and benign tumors have different characteristics: malignant tumors are cancerous, they grow uncontrollably, invade nearby tissues, and can spread to other parts of the body, and benign tumors are non-cancerous slow-growing, don’t invade surrounding tissue, and are often treatable or harmless. Looking at cell area (and other variables) is interesting because it could give insight into which features can best be used to predict malignancy. The null hypothesis is that benign tumors and malignant tumors have cells of the same average area. The alternative hypothesis is that malignant tumors have larger average cell areas. 
+
+The statistic to test this difference will be difference in means between area in the benign and malignant tumor samples. 
+
+```{r}
+tumor_data |> 
+  group_by(diagnosis) |> 
+  summarize(ave_area = mean(area_mean))|>
+  mutate(diagnosis = factor(diagnosis, levels = c("B", "M")))
+```
+Here is a visual of the original relationship in the data.
+
+```{r}
+tumor_data |> 
+  ggplot(aes(x = diagnosis, y = area_mean)) + 
+  geom_boxplot()
+```
+So, it looks like the mean area of malignant tumor cells is larger than that of benign tumor cells. However, is that generalizable to other breast tumors? Off to the permutation test!
+
+# The permutation test
+
+To start, I will generate a null sample distribution. 
+
+```{r}
+perm_data <- function(rep, data) {
+  data |>
+    select(diagnosis, area_mean) |>
+    mutate(area_perm = sample(area_mean, replace = FALSE)) |>
+    group_by(diagnosis) |>
+    summarize(
+      obs_mean  = mean(area_mean),
+      perm_mean = mean(area_perm),
+      .groups = "drop") |>
+    summarize(
+      obs_mean_diff  = diff(obs_mean),
+      perm_mean_diff = diff(perm_mean),
+      rep = rep
+    )
+}
+
+map(c(1:10000), perm_data, data = tumor_data) |> 
+  list_rbind()
+```
+
+```{r}
+set.seed(47)
+perm_stats <- 
+  map(c(1:10000), perm_data, data = tumor_data) |> 
+  list_rbind() 
+
+perm_stats |> 
+  ggplot(aes(x = perm_mean_diff)) + 
+  geom_histogram(binwidth = 5) + 
+  geom_vline(aes(xintercept = obs_mean_diff), color = "red")
+```
+```{r}
+perm_stats |> 
+    summarize(p_val = mean(perm_mean_diff > obs_mean_diff))
+```
+
+
