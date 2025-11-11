@@ -22,6 +22,8 @@ website:
         text: Text Analysis
       - href: permutation.qmd
         text: "Permutation Test"
+      - href: ethics.qmd
+        text: "Data Science Ethics"
       
             
   page-footer: 
