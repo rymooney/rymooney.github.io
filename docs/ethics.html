@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Ryan Mooney">
 
-<title>pixar – Ryan Mooney</title>
+<title>Data Science Ethics – Ryan Mooney</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,41 +20,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -165,7 +131,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="menu-text">Permutation Test</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./ethics.html"> 
+    <a class="nav-link active" href="./ethics.html" aria-current="page"> 
 <span class="menu-text">Data Science Ethics</span></a>
   </li>  
 </ul>
@@ -184,8 +150,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#the-data" id="toc-the-data" class="nav-link active" data-scroll-target="#the-data">The Data</a></li>
-  <li><a href="#lets-plot-it" id="toc-lets-plot-it" class="nav-link" data-scroll-target="#lets-plot-it">Let’s plot it!</a></li>
+  <li><a href="#the-task" id="toc-the-task" class="nav-link active" data-scroll-target="#the-task">The Task</a></li>
+  <li><a href="#so-what-happened" id="toc-so-what-happened" class="nav-link" data-scroll-target="#so-what-happened">So, what happened?</a></li>
+  <li><a href="#what-is-the-permission-structure-for-using-the-data-was-it-followed" id="toc-what-is-the-permission-structure-for-using-the-data-was-it-followed" class="nav-link" data-scroll-target="#what-is-the-permission-structure-for-using-the-data-was-it-followed">What is the permission structure for using the data? Was it followed?</a></li>
+  <li><a href="#how-were-the-variables-collected-were-they-accurately-recorded-is-there-any-missing-data" id="toc-how-were-the-variables-collected-were-they-accurately-recorded-is-there-any-missing-data" class="nav-link" data-scroll-target="#how-were-the-variables-collected-were-they-accurately-recorded-is-there-any-missing-data">How were the variables collected? Were they accurately recorded? Is there any missing data?</a></li>
+  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section"></a></li>
+  <li><a href="#section-1" id="toc-section-1" class="nav-link" data-scroll-target="#section-1"></a></li>
+  <li><a href="#why-does-this-matter" id="toc-why-does-this-matter" class="nav-link" data-scroll-target="#why-does-this-matter">Why does this matter?</a></li>
   </ul>
 </nav>
     </div>
@@ -194,13 +165,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">pixar</h1>
+<h1 class="title">Data Science Ethics</h1>
 </div>
 
 
 
 <div class="quarto-title-meta column-page-left">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Ryan Mooney </p>
+          </div>
+  </div>
     
   
     
@@ -211,47 +188,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<section id="the-data" class="level1">
-<h1>The Data</h1>
-<p>Let’s explore a data set about the ratings of pixar films Pixar films; the data here is from the <a href="https://github.com/rfordatascience/tidytuesday/tree/main/data/2025/2025-03-11">TidyTuesday</a> repo and the original data is from <a href="https://en.wikipedia.org/wiki/List_of_Pixar_films">Wikipedia</a>.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>pixar_ratings <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">'https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-03-11/public_response.csv'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
+<section id="the-task" class="level1">
+<h1>The Task</h1>
+<p>Today, I will be exploring an example of ethics and power in the data science context. Specifically, I will be looking into a specific case study. The ethical dilemma revolves around an event that happened in 2012, which is narrated and given a great overview in Duhigg, C. (2012), <a href="https://www.nytimes.com/2012/02/19/magazine/shopping-habits.html?unlocked_article_code=1.6U4.nLSt.-yehBjKHEmPW&amp;smid=url-share">How Companies Learn Your Secrets</a>, The New York Times Magazine. I will also include some information from Fung Institute for Engineering Leadership. (2013). <a href="https://funginstitute.berkeley.edu/news/avoiding-the-traps-of-big-data/">Avoiding the traps of big data.</a>, UC Berkeley Fung Institute.</p>
 </section>
-<section id="lets-plot-it" class="level1">
-<h1>Let’s plot it!</h1>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pixar_ratings_long <span class="ot">&lt;-</span> pixar_ratings <span class="sc">|&gt;</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">c</span>(rotten_tomatoes, metacritic, critics_choice),</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"rating_source"</span>,</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"score"</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  )<span class="sc">|&gt;</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(score)) </span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pixar_ratings_long, <span class="fu">aes</span>(<span class="at">x =</span> film, <span class="at">y =</span> score, <span class="at">color =</span> rating_source)) <span class="sc">+</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group =</span> rating_source)) <span class="sc">+</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Pixar Movie Ratings"</span>,</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Film"</span>,</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Score"</span>,</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"Rating Source"</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>)</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="pixar_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
+<section id="so-what-happened" class="level1">
+<h1>So, what happened?</h1>
+<p>Duhigg (2012) reported that Target’s analytics team (namely, statistician Andrew Pole) built an algorithm that tried to infer which shoppers were likely in their second semester of pregnancy. Their goal was to be able to start advertising to to-be parents before they even had the child, as they saw that as an opening in the market that they could generate more profit if they could advertise to this population. Andrew Pole was hired by Target to “to identify those unique moments in consumers’ lives [like late-pregnancy] when their shopping habits become particularly flexible and the right advertisement or coupon would cause them to begin spending in new ways” (Duhigg, 2012). In moments of life change, consumers are more highly susceptible to influence by advertisements! Pole looked at the data in Target’s pregnancy directory and found that pregnant people buy more lotion, supplements, soap, and cotton balls. So, Pole and analytics team developed an algorithm to predict a person’s due date, so Target could send timely, pregnancy-related coupons exactly when they are most likely to buy these items. Pole applied this algorithm to every regular customer at Target and generated a list of tens of thousands of customers likely to be pregnant so that they could be sent pregnancy-specific coupons and advertisements. The ethical dilemma here is the collection of personal health and family data without explicit consent and acting on the information inferred for corporate gain. When does an analytics team or algorithm go too far?</p>
+</section>
+<section id="what-is-the-permission-structure-for-using-the-data-was-it-followed" class="level1">
+<h1>What is the permission structure for using the data? Was it followed?</h1>
+<p>Target’s <a href="https://www.target.com/c/target-privacy-policy/-/N-4sr7p">privacy policy</a> essentially says that you automatically consent to have data collected about you unless you explicitly opt out. This means that as long as you shop or interact with Target, you are considered to have consented to their data being used for advertising and analytics. This was done by using transactional data and shopping-habits data to build a pregnancy prediction model in Target, which would influence the ads and coupons a customer received. Target technically did not breach any legal terms as outlined in their privacy policy. But ethically speaking, there was not informed consent on behalf of the customer, since they had no real way of knowing that their data would be used to infer medical or reproductive information and target advertising and coupons to you.</p>
+</section>
+<section id="how-were-the-variables-collected-were-they-accurately-recorded-is-there-any-missing-data" class="level1">
+<h1>How were the variables collected? Were they accurately recorded? Is there any missing data?</h1>
+<p>Target tracked each shopper using a unique Guest ID, which linked together various variables related to shoppers. Namely, they identified 25 products that were likely to be purchased more by people in their second semester of pregnancy. The purchasing data of these 25 specific products were analyzed together and made a “Pregnancy Prediction Score” for each consumer. When a customer had a high pregnancy prediction score, they were marked to receive advertisements and coupons mailed to their home, because of course Target has this data as well. The transactional data itself was likely accurately recorded, as Target has tables that hold all of its customer’s transactions, what they purchased so that they can do analyses like this one. However, applying those 25 specific products to generate a pregnancy prediction score defninitely is not perfectly accurate. For example, a person buying unscented lotion does not automatically ensure that they are pregnant. So, the algorithm used by Target, while definitely good at predicting pregnancy, is not perfectly accurate. It also makes you me ask the question about if it is weirder if Target knows a person is pregnant and that person actually is or if Target thinks someone is pregnant but in not. Why should Target get to speculate about this?</p>
+</section>
+<section id="section" class="level1">
+<h1></h1>
+</section>
+<section id="section-1" class="level1">
+<h1></h1>
+</section>
+<section id="why-does-this-matter" class="level1">
+<h1>Why does this matter?</h1>
 
 
 </section>
