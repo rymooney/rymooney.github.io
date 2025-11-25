@@ -1,0 +1,41 @@
+---
+title: "SQL"
+format: html
+author: "Ryan Mooney"
+---
+
+```{r}
+
+con_traffic <- DBI::dbConnect(
+  RMariaDB::MariaDB(),
+  dbname = "traffic",
+  host = Sys.getenv("TRAFFIC_HOST"),
+  user = Sys.getenv("TRAFFIC_USER"),
+  password = Sys.getenv("TRAFFIC_PWD")
+)
+```
+
+```{r}
+#| connection: con_air
+DBI::dbListTables(con_traffic)
+```
+
+```{sql}
+#| connection: con_traffic
+
+SELECT * FROM co_statewide_2020_04_01 LIMIT 8;
+```
+
+
+```{sql}
+#| connection: con_traffic
+
+SELECT
+    officer_sex,
+    COUNT(*) AS stops_by_officer_sex
+FROM co_statewide_2020_04_01
+WHERE officer_sex IS NOT NULL
+GROUP BY officer_sex
+ORDER BY stops_by_officer_sex DESC;
+```
+

@@ -24,6 +24,8 @@ website:
         text: "Permutation Test"
       - href: ethics.qmd
         text: "Data Science Ethics"
+      - href: SQL.qmd
+        text: "SQL"
       
             
   page-footer: 
