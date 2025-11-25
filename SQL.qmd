@@ -3,9 +3,12 @@ title: "SQL"
 format: html
 author: "Ryan Mooney"
 ---
+# The task
+For today's project, I will be working with data from the [Stanford Open Policing Project](https://openpolicing.stanford.edu/) pubished by Pierson, et al. 2020. “[A Large-Scale Analysis of Racial Disparities in Police Stops Across the United States](https://www-nature-com.ccl.idm.oclc.org/articles/s41562-020-0858-1).” Nature Human Behaviour, 1–10. I will be investigating a few of the many tables contained within the database.
+
+First, let's set up the connection to the traffic database.
 
 ```{r}
-
 con_traffic <- DBI::dbConnect(
   RMariaDB::MariaDB(),
   dbname = "traffic",
@@ -15,6 +18,15 @@ con_traffic <- DBI::dbConnect(
 )
 ```
 
+```{r}
+#| warning: FALSE
+#| message: FALSE
+library(tidyverse)
+library(DBI)
+```
+
+
+Let's have a look at all of the tables that are in the traffic database, so we know what we are working with.
 ```{r}
 #| connection: con_air
 DBI::dbListTables(con_traffic)
@@ -26,16 +38,101 @@ DBI::dbListTables(con_traffic)
 SELECT * FROM co_statewide_2020_04_01 LIMIT 8;
 ```
 
+As I am from Colorado, I am curious to look more specifically at the state and how vehicular stops compare between some states I might want to live in (namely, Colorado, California, and New York). 
+
+First, I'd like to make a plot to show how vehicular stops have changes over the years in these three states.
 
 ```{sql}
 #| connection: con_traffic
 
 SELECT
-    officer_sex,
-    COUNT(*) AS stops_by_officer_sex
+    YEAR(date) AS year,
+    COUNT(*) AS total_stops
 FROM co_statewide_2020_04_01
-WHERE officer_sex IS NOT NULL
-GROUP BY officer_sex
-ORDER BY stops_by_officer_sex DESC;
+WHERE type = 'vehicular'
+GROUP BY YEAR(date)
+ORDER BY YEAR(date);
+```
+```{r}
+co_stops_per_year <- dbGetQuery(
+  con_traffic,
+  "
+  SELECT
+      YEAR(date) AS year,
+      COUNT(*) AS total_stops
+  FROM co_statewide_2020_04_01
+  WHERE type = 'vehicular'
+  GROUP BY YEAR(date)
+  ORDER BY YEAR(date);
+  "
+)
 ```
 
+```{r}
+#| warning: FALSE
+#| message: FALSE
+ggplot(co_stops_per_year, aes(x = year, y = total_stops)) +
+  geom_line() +
+  geom_point() +
+  labs(
+    title = "Total Vehicular Stops in Colorado per Year",
+    x = "Year",
+    y = "Number of Stops"
+  )
+```
+Now, I am going to try to UNION all three tables (co_statewide, ca_statewide, and ny_statewide), so that I can see how the states differ in their number of vehicular stops over the past few years. 
+
+```{r}
+co_ca_ny_stops_per_year <- dbGetQuery(
+  con_traffic,
+  "
+  SELECT
+      'Colorado' AS state,
+      YEAR(date) AS year,
+      COUNT(*) AS total_stops
+  FROM co_statewide_2020_04_01
+  WHERE type = 'vehicular'
+  GROUP BY state, YEAR(date)
+
+  UNION ALL
+
+  SELECT
+      'California' AS state,
+      YEAR(date) AS year,
+      COUNT(*) AS total_stops
+  FROM ca_statewide_2023_01_26
+  WHERE type = 'vehicular'
+  GROUP BY state, YEAR(date)
+
+  UNION ALL
+
+  SELECT
+      'New York' AS state,
+      YEAR(date) AS year,
+      COUNT(*) AS total_stops
+  FROM ny_statewide_2020_04_01
+  WHERE type = 'vehicular'
+  GROUP BY state, YEAR(date)
+
+  ORDER BY year, state;
+  "
+)
+```
+
+```{r}
+#| warning: FALSE
+#| message: FALSE
+
+ggplot(co_ca_ny_stops_per_year, aes(x = year, y = total_stops, color=state)) +
+  geom_line() +
+  geom_point() +
+  labs(
+    title = "Total Vehicular Stops in Colorado per Year",
+    x = "Year",
+    y = "Number of Stops"
+  )
+```
+
+
+# References
+Pierson, E., Simoiu, C., Overgoor, J. et al. A large-scale analysis of racial disparities in police stops across the United States. Nat Hum Behav 4, 736–745 (2020).
