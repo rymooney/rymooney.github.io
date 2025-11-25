@@ -83,7 +83,7 @@ ggplot(co_stops_per_year, aes(x = year, y = total_stops)) +
 Now, I am going to try to UNION all three tables (co_statewide, ca_statewide, and ny_statewide), so that I can see how the states differ in their number of vehicular stops over the past few years. 
 
 ```{r}
-co_ca_ny_stops_per_year <- dbGetQuery(
+stops_per_year <- dbGetQuery(
   con_traffic,
   "
   SELECT
@@ -119,18 +119,48 @@ co_ca_ny_stops_per_year <- dbGetQuery(
 )
 ```
 
+I will do some wrangling, as the first time I did the analysis below, I realized I should normalize the stops to the population size, since my analyis was making the stops in California appear much larger than the stops in Colorado and New York simply because it has a much larger state. 
 ```{r}
-#| warning: FALSE
-#| message: FALSE
+stops_per_year_normalized <- stops_per_year |>
+  filter(!is.na(year)) |>
+  mutate(
+    year = as.numeric(year),
+    total_stops = as.numeric(total_stops),
+    pop_avg = case_when(
+      state == "California" ~ 38359674,
+      state == "Colorado" ~  5279185,
+      state == "New York" ~ 19636586,
+    ),
+    stops_per_1000 = total_stops / pop_avg * 1000
+  )
 
-ggplot(co_ca_ny_stops_per_year, aes(x = year, y = total_stops, color=state)) +
+head(stops_per_year_normalized)
+```
+
+Now we can visualize the data! Let's see how the states compare 
+
+```{r}
+#| message: FALSE
+#| warning: FALSE
+
+ggplot(stops_per_year_normalized,
+       aes(x = year, y = stops_per_1000, color = state)) +
   geom_line() +
   geom_point() +
   labs(
-    title = "Total Vehicular Stops in Colorado per Year",
+    title = "Vehicular Stops per 1,000 Residents",
     x = "Year",
-    y = "Number of Stops"
+    y = "Stops per 1,000 Residents",
+    color = "State"
   )
+```
+
+So, overall, California has more vehicular stops than Colorado and New York, and also has some more variation from year to year. Important to note, I just used the current state population and did not account for changes in the population from year to year. 
+
+Next, now that I am more familiar with how these tables are organized and the specific variables available, I am interested in investigating California more closely to observe some more trends. 
+
+```{r}
+dbDisconnect(con_traffic, shutdown = TRUE)
 ```
 
 
