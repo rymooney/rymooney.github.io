@@ -44,41 +44,39 @@ First, I'd like to make a plot to show how vehicular stops have changes over the
 
 Now, I am going to try to UNION all three tables (co_statewide, ca_statewide, and ny_statewide), so that I can see how the states differ in their number of vehicular stops over the past few years. 
 
-```{r}
-stops_per_year <- dbGetQuery(
-  con_traffic,
-  "
-  SELECT
-      'Colorado' AS state,
-      YEAR(date) AS year,
-      COUNT(*) AS total_stops
-  FROM co_statewide_2020_04_01
-  WHERE type = 'vehicular'
-  GROUP BY state, YEAR(date)
+```{sql}
+#| connection: con_traffic
+#| output.var: stops_per_year
 
-  UNION ALL
+SELECT
+    'Colorado' AS state,
+    YEAR(date) AS year,
+    COUNT(*) AS total_stops
+FROM co_statewide_2020_04_01
+WHERE type = 'vehicular'
+GROUP BY state, YEAR(date)
 
-  SELECT
-      'California' AS state,
-      YEAR(date) AS year,
-      COUNT(*) AS total_stops
-  FROM ca_statewide_2023_01_26
-  WHERE type = 'vehicular'
-  GROUP BY state, YEAR(date)
+UNION ALL
 
-  UNION ALL
+ SELECT
+    'California' AS state,
+    YEAR(date) AS year,
+    COUNT(*) AS total_stops
+FROM ca_statewide_2023_01_26
+WHERE type = 'vehicular'
+GROUP BY state, YEAR(date)
 
-  SELECT
-      'New York' AS state,
-      YEAR(date) AS year,
-      COUNT(*) AS total_stops
-  FROM ny_statewide_2020_04_01
-  WHERE type = 'vehicular'
-  GROUP BY state, YEAR(date)
+UNION ALL
 
-  ORDER BY year, state;
-  "
-)
+SELECT
+    'New York' AS state,
+    YEAR(date) AS year,
+    COUNT(*) AS total_stops
+FROM ny_statewide_2020_04_01
+WHERE type = 'vehicular'
+GROUP BY state, YEAR(date)
+
+ORDER BY year, state;
 ```
 
 I will do some wrangling, as the first time I did the analysis below, I realized I should normalize the stops to the population size, since my analyis was making the stops in California appear much larger than the stops in Colorado and New York simply because it has a much larger state. 
