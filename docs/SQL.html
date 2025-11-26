@@ -225,7 +225,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="the-task" class="level1">
 <h1>The task</h1>
 <p>For today’s project, I will be working with data from the <a href="https://openpolicing.stanford.edu/">Stanford Open Policing Project</a> pubished by Pierson, et al.&nbsp;2020. “<a href="https://www-nature-com.ccl.idm.oclc.org/articles/s41562-020-0858-1">A Large-Scale Analysis of Racial Disparities in Police Stops Across the United States</a>.” Nature Human Behaviour, 1–10. I will be investigating a few of the many tables contained within the database.</p>
-<p>First, let’s set up the connection to the traffic database.</p>
+<p>First, let’s set up the connection to the traffic database and upload the needed packages for later analyses.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>con_traffic <span class="ot">&lt;-</span> DBI<span class="sc">::</span><span class="fu">dbConnect</span>(</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  RMariaDB<span class="sc">::</span><span class="fu">MariaDB</span>(),</span>
@@ -290,44 +290,43 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> co_statewide_2020_04_01 <span class="kw">LIMIT</span> <span class="dv">8</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> ca_statewide_2023_01_26 <span class="kw">LIMIT</span> <span class="dv">8</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <caption>8 records</caption>
 <colgroup>
+<col style="width: 4%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 2%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 7%">
+<col style="width: 2%">
+<col style="width: 7%">
+<col style="width: 3%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 2%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 3%">
+<col style="width: 7%">
+<col style="width: 2%">
+<col style="width: 7%">
 <col style="width: 5%">
-<col style="width: 3%">
-<col style="width: 1%">
-<col style="width: 3%">
-<col style="width: 4%">
-<col style="width: 3%">
-<col style="width: 3%">
-<col style="width: 3%">
-<col style="width: 4%">
-<col style="width: 3%">
-<col style="width: 2%">
-<col style="width: 27%">
-<col style="width: 3%">
-<col style="width: 4%">
-<col style="width: 4%">
-<col style="width: 2%">
-<col style="width: 4%">
-<col style="width: 4%">
-<col style="width: 3%">
-<col style="width: 3%">
 </colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">raw_row_number</th>
 <th style="text-align: left;">date</th>
-<th style="text-align: left;">time</th>
-<th style="text-align: left;">location</th>
 <th style="text-align: left;">county_name</th>
-<th style="text-align: right;">subject_age</th>
+<th style="text-align: left;">district</th>
 <th style="text-align: left;">subject_race</th>
 <th style="text-align: left;">subject_sex</th>
-<th style="text-align: left;">officer_id_hash</th>
-<th style="text-align: left;">officer_sex</th>
+<th style="text-align: left;">department_name</th>
 <th style="text-align: left;">type</th>
 <th style="text-align: left;">violation</th>
 <th style="text-align: right;">arrest_made</th>
@@ -335,187 +334,208 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <th style="text-align: right;">warning_issued</th>
 <th style="text-align: left;">outcome</th>
 <th style="text-align: right;">contraband_found</th>
+<th style="text-align: right;">frisk_performed</th>
 <th style="text-align: right;">search_conducted</th>
+<th style="text-align: right;">search_person</th>
 <th style="text-align: left;">search_basis</th>
-<th style="text-align: left;">raw_Ethnicity</th>
+<th style="text-align: left;">reason_for_stop</th>
+<th style="text-align: left;">raw_race</th>
+<th style="text-align: left;">raw_search_basis</th>
+<th style="text-align: right;">raw_location_code</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">1947986|1947987</td>
-<td style="text-align: left;">2013-06-19</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">19, I70, 8</td>
-<td style="text-align: left;">Mesa County</td>
-<td style="text-align: right;">26</td>
-<td style="text-align: left;">hispanic</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2009-07-01</td>
+<td style="text-align: left;">Stanislaus</td>
+<td style="text-align: left;">Modesto</td>
+<td style="text-align: left;">other</td>
 <td style="text-align: left;">male</td>
-<td style="text-align: left;">b942632983</td>
-<td style="text-align: left;">male</td>
+<td style="text-align: left;">California Highway Patrol</td>
 <td style="text-align: left;">vehicular</td>
-<td style="text-align: left;">Driver’s Vision Obstructed Through Required Glass|Drove Vehicle When Safety Belt Not in Use</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: left;">citation</td>
+<td style="text-align: left;">Motorist / Public Service</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
 <td style="text-align: right;">NA</td>
 <td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: left;">NA</td>
-<td style="text-align: left;">H</td>
+<td style="text-align: left;">Motorist / Public Service</td>
+<td style="text-align: left;">Other</td>
+<td style="text-align: left;">Vehicle Inventory</td>
+<td style="text-align: right;">465</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">1537576</td>
-<td style="text-align: left;">2012-08-24</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">254, H285, 11</td>
-<td style="text-align: left;">Jefferson County</td>
-<td style="text-align: right;">NA</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">f3d4f46927</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">2009-07-01</td>
+<td style="text-align: left;">Stanislaus</td>
+<td style="text-align: left;">Modesto</td>
+<td style="text-align: left;">hispanic</td>
+<td style="text-align: left;">female</td>
+<td style="text-align: left;">California Highway Patrol</td>
 <td style="text-align: left;">vehicular</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Moving Violation (VC)</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;">summons</td>
+<td style="text-align: right;">NA</td>
 <td style="text-align: right;">NA</td>
 <td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: left;">NA</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Moving Violation (VC)</td>
+<td style="text-align: left;">Hispanic</td>
+<td style="text-align: left;">Probable Cause (positive)</td>
+<td style="text-align: right;">465</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">1581594</td>
-<td style="text-align: left;">2012-09-23</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">115, I76, 13</td>
-<td style="text-align: left;">Logan County</td>
-<td style="text-align: right;">52</td>
-<td style="text-align: left;">white</td>
-<td style="text-align: left;">male</td>
-<td style="text-align: left;">6e49e2fbc8</td>
-<td style="text-align: left;">male</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">2009-07-01</td>
+<td style="text-align: left;">Stanislaus</td>
+<td style="text-align: left;">Modesto</td>
+<td style="text-align: left;">hispanic</td>
+<td style="text-align: left;">female</td>
+<td style="text-align: left;">California Highway Patrol</td>
 <td style="text-align: left;">vehicular</td>
-<td style="text-align: left;">Speeding (10-19 MPH Over the Maximum 75 MPH Limit)</td>
+<td style="text-align: left;">Moving Violation (VC)</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">warning</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">summons</td>
 <td style="text-align: right;">NA</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">W</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">other</td>
+<td style="text-align: left;">Moving Violation (VC)</td>
+<td style="text-align: left;">Hispanic</td>
+<td style="text-align: left;">Probable Cause (positive)</td>
+<td style="text-align: right;">465</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">1009205</td>
-<td style="text-align: left;">2011-08-25</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">197, H85, 47</td>
-<td style="text-align: left;">Douglas County</td>
-<td style="text-align: right;">32</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">2009-07-01</td>
+<td style="text-align: left;">Stanislaus</td>
+<td style="text-align: left;">Modesto</td>
 <td style="text-align: left;">white</td>
 <td style="text-align: left;">female</td>
-<td style="text-align: left;">eaea851669</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;">California Highway Patrol</td>
 <td style="text-align: left;">vehicular</td>
-<td style="text-align: left;">Speeding (10-19 MPH Over Prima Facie Limit *)</td>
+<td style="text-align: left;">Moving Violation (VC)</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: left;">citation</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">summons</td>
+<td style="text-align: right;">NA</td>
 <td style="text-align: right;">NA</td>
 <td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: left;">NA</td>
-<td style="text-align: left;">W</td>
+<td style="text-align: left;">Moving Violation (VC)</td>
+<td style="text-align: left;">White</td>
+<td style="text-align: left;">Probable Cause (positive)</td>
+<td style="text-align: right;">465</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">1932619</td>
-<td style="text-align: left;">2013-06-08</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">107, H287, 45</td>
-<td style="text-align: left;">Kiowa County</td>
-<td style="text-align: right;">33</td>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">2009-07-01</td>
+<td style="text-align: left;">Stanislaus</td>
+<td style="text-align: left;">Modesto</td>
 <td style="text-align: left;">hispanic</td>
 <td style="text-align: left;">male</td>
-<td style="text-align: left;">d18e34d749</td>
-<td style="text-align: left;">male</td>
+<td style="text-align: left;">California Highway Patrol</td>
 <td style="text-align: left;">vehicular</td>
-<td style="text-align: left;">Failed to Drive in Single Lane (Weaving)</td>
+<td style="text-align: left;">Moving Violation (VC)</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">warning</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">summons</td>
 <td style="text-align: right;">NA</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">H</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">other</td>
+<td style="text-align: left;">Moving Violation (VC)</td>
+<td style="text-align: left;">Hispanic</td>
+<td style="text-align: left;">Probable Cause (positive)</td>
+<td style="text-align: right;">465</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">1179436</td>
-<td style="text-align: left;">2011-12-23</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">48, 384, 7</td>
-<td style="text-align: left;">Boulder County</td>
-<td style="text-align: right;">NA</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">b84c696aed</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">2009-07-01</td>
+<td style="text-align: left;">Stanislaus</td>
+<td style="text-align: left;">Modesto</td>
+<td style="text-align: left;">hispanic</td>
+<td style="text-align: left;">male</td>
+<td style="text-align: left;">California Highway Patrol</td>
 <td style="text-align: left;">vehicular</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Moving Violation (VC)</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;">summons</td>
+<td style="text-align: right;">NA</td>
 <td style="text-align: right;">NA</td>
 <td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: left;">NA</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Moving Violation (VC)</td>
+<td style="text-align: left;">Hispanic</td>
+<td style="text-align: left;">Probable Cause (positive)</td>
+<td style="text-align: right;">465</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">1326795</td>
-<td style="text-align: left;">2012-04-07</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">0, R2500, 7</td>
-<td style="text-align: left;">Boulder County</td>
-<td style="text-align: right;">39</td>
-<td style="text-align: left;">white</td>
-<td style="text-align: left;">male</td>
-<td style="text-align: left;">4c0279748e</td>
-<td style="text-align: left;">male</td>
+<td style="text-align: left;">7</td>
+<td style="text-align: left;">2009-07-01</td>
+<td style="text-align: left;">Stanislaus</td>
+<td style="text-align: left;">Modesto</td>
+<td style="text-align: left;">hispanic</td>
+<td style="text-align: left;">female</td>
+<td style="text-align: left;">California Highway Patrol</td>
 <td style="text-align: left;">vehicular</td>
-<td style="text-align: left;">Speeding (10-19 MPH Over Prima Facie Limit *)</td>
+<td style="text-align: left;">Moving Violation (VC)</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: left;">citation</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">summons</td>
+<td style="text-align: right;">NA</td>
 <td style="text-align: right;">NA</td>
 <td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: left;">NA</td>
-<td style="text-align: left;">W</td>
+<td style="text-align: left;">Moving Violation (VC)</td>
+<td style="text-align: left;">Hispanic</td>
+<td style="text-align: left;">Probable Cause (positive)</td>
+<td style="text-align: right;">465</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">1786795</td>
-<td style="text-align: left;">2013-03-03</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">19, E470, 10</td>
-<td style="text-align: left;">Arapahoe County</td>
-<td style="text-align: right;">44</td>
-<td style="text-align: left;">white</td>
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">2009-07-01</td>
+<td style="text-align: left;">Stanislaus</td>
+<td style="text-align: left;">Modesto</td>
+<td style="text-align: left;">other</td>
 <td style="text-align: left;">female</td>
-<td style="text-align: left;">e6b5b9bb98</td>
-<td style="text-align: left;">male</td>
+<td style="text-align: left;">California Highway Patrol</td>
 <td style="text-align: left;">vehicular</td>
-<td style="text-align: left;">Failed to Drive in Single Lane (Weaving)</td>
+<td style="text-align: left;">Moving Violation (VC)</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">warning</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">summons</td>
+<td style="text-align: right;">NA</td>
 <td style="text-align: right;">NA</td>
 <td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: left;">NA</td>
-<td style="text-align: left;">W</td>
+<td style="text-align: left;">Moving Violation (VC)</td>
+<td style="text-align: left;">Other</td>
+<td style="text-align: left;">Probable Cause (positive)</td>
+<td style="text-align: right;">465</td>
 </tr>
 </tbody>
 </table>
@@ -523,148 +543,54 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>As I am from Colorado, I am curious to look more specifically at the state and how vehicular stops compare between some states I might want to live in (namely, Colorado, California, and New York).</p>
 <p>First, I’d like to make a plot to show how vehicular stops have changes over the years in these three states.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">YEAR</span>(<span class="dt">date</span>) <span class="kw">AS</span> <span class="dt">year</span>,</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> total_stops</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> co_statewide_2020_04_01</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> <span class="kw">type</span> <span class="op">=</span> <span class="st">'vehicular'</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> <span class="dt">YEAR</span>(<span class="dt">date</span>)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> <span class="dt">YEAR</span>(<span class="dt">date</span>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<caption>9 records</caption>
-<thead>
-<tr class="header">
-<th style="text-align: right;">year</th>
-<th style="text-align: right;">total_stops</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: right;">NA</td>
-<td style="text-align: right;">3</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2010</td>
-<td style="text-align: right;">470284</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">2011</td>
-<td style="text-align: right;">432101</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2012</td>
-<td style="text-align: right;">387860</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">2013</td>
-<td style="text-align: right;">394583</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2014</td>
-<td style="text-align: right;">414157</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">2015</td>
-<td style="text-align: right;">399619</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2016</td>
-<td style="text-align: right;">317213</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">2017</td>
-<td style="text-align: right;">297033</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>co_stops_per_year <span class="ot">&lt;-</span> <span class="fu">dbGetQuery</span>(</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  con_traffic,</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="st">  SELECT</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="st">      YEAR(date) AS year,</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="st">      COUNT(*) AS total_stops</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="st">  FROM co_statewide_2020_04_01</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="st">  WHERE type = 'vehicular'</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="st">  GROUP BY YEAR(date)</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="st">  ORDER BY YEAR(date);</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="st">  "</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(co_stops_per_year, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> total_stops)) <span class="sc">+</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Total Vehicular Stops in Colorado per Year"</span>,</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of Stops"</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="SQL_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
 <p>Now, I am going to try to UNION all three tables (co_statewide, ca_statewide, and ny_statewide), so that I can see how the states differ in their number of vehicular stops over the past few years.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>stops_per_year <span class="ot">&lt;-</span> <span class="fu">dbGetQuery</span>(</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  con_traffic,</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="st">  SELECT</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="st">      'Colorado' AS state,</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="st">      YEAR(date) AS year,</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="st">      COUNT(*) AS total_stops</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="st">  FROM co_statewide_2020_04_01</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="st">  WHERE type = 'vehicular'</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="st">  GROUP BY state, YEAR(date)</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="st">  UNION ALL</span></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="st">  SELECT</span></span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="st">      'California' AS state,</span></span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="st">      YEAR(date) AS year,</span></span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="st">      COUNT(*) AS total_stops</span></span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="st">  FROM ca_statewide_2023_01_26</span></span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="st">  WHERE type = 'vehicular'</span></span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="st">  GROUP BY state, YEAR(date)</span></span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="st">  UNION ALL</span></span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a><span class="st">  SELECT</span></span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="st">      'New York' AS state,</span></span>
-<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a><span class="st">      YEAR(date) AS year,</span></span>
-<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a><span class="st">      COUNT(*) AS total_stops</span></span>
-<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a><span class="st">  FROM ny_statewide_2020_04_01</span></span>
-<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a><span class="st">  WHERE type = 'vehicular'</span></span>
-<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a><span class="st">  GROUP BY state, YEAR(date)</span></span>
-<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a><span class="st">  ORDER BY year, state;</span></span>
-<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a><span class="st">  "</span></span>
-<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell" data-output.var="stops_per_year">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Colorado'</span> <span class="kw">AS</span> state,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">YEAR</span>(<span class="dt">date</span>) <span class="kw">AS</span> <span class="dt">year</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> total_stops</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> co_statewide_2020_04_01</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> <span class="kw">type</span> <span class="op">=</span> <span class="st">'vehicular'</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> state, <span class="dt">YEAR</span>(<span class="dt">date</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="kw">UNION</span> <span class="kw">ALL</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a> <span class="kw">SELECT</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">'California'</span> <span class="kw">AS</span> state,</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">YEAR</span>(<span class="dt">date</span>) <span class="kw">AS</span> <span class="dt">year</span>,</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> total_stops</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ca_statewide_2023_01_26</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> <span class="kw">type</span> <span class="op">=</span> <span class="st">'vehicular'</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> state, <span class="dt">YEAR</span>(<span class="dt">date</span>)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="kw">UNION</span> <span class="kw">ALL</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">'New York'</span> <span class="kw">AS</span> state,</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="dt">YEAR</span>(<span class="dt">date</span>) <span class="kw">AS</span> <span class="dt">year</span>,</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> total_stops</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ny_statewide_2020_04_01</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> <span class="kw">type</span> <span class="op">=</span> <span class="st">'vehicular'</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> state, <span class="dt">YEAR</span>(<span class="dt">date</span>)</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> <span class="dt">year</span>, state;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>I will do some wrangling, as the first time I did the analysis below, I realized I should normalize the stops to the population size, since my analyis was making the stops in California appear much larger than the stops in Colorado and New York simply because it has a much larger state.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>stops_per_year_normalized <span class="ot">&lt;-</span> stops_per_year <span class="sc">|&gt;</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(year)) <span class="sc">|&gt;</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="fu">as.numeric</span>(year),</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_stops =</span> <span class="fu">as.numeric</span>(total_stops),</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">pop_avg =</span> <span class="fu">case_when</span>(</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>      state <span class="sc">==</span> <span class="st">"California"</span> <span class="sc">~</span> <span class="dv">38359674</span>,</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>      state <span class="sc">==</span> <span class="st">"Colorado"</span> <span class="sc">~</span>  <span class="dv">5279185</span>,</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>      state <span class="sc">==</span> <span class="st">"New York"</span> <span class="sc">~</span> <span class="dv">19636586</span>,</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">stops_per_1000 =</span> total_stops <span class="sc">/</span> pop_avg <span class="sc">*</span> <span class="dv">1000</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(stops_per_year_normalized)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>stops_per_year_normalized <span class="ot">&lt;-</span> stops_per_year <span class="sc">|&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(year)) <span class="sc">|&gt;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="fu">as.numeric</span>(year),</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_stops =</span> <span class="fu">as.numeric</span>(total_stops),</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">pop_avg =</span> <span class="fu">case_when</span>(</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>      state <span class="sc">==</span> <span class="st">"California"</span> <span class="sc">~</span> <span class="dv">38359674</span>,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>      state <span class="sc">==</span> <span class="st">"Colorado"</span> <span class="sc">~</span>  <span class="dv">5279185</span>,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>      state <span class="sc">==</span> <span class="st">"New York"</span> <span class="sc">~</span> <span class="dv">19636586</span>,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">stops_per_1000 =</span> total_stops <span class="sc">/</span> pop_avg <span class="sc">*</span> <span class="dv">1000</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(stops_per_year_normalized)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       state year total_stops  pop_avg stops_per_1000
 1 California 2009     2503272 38359674       65.25791
@@ -677,26 +603,81 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>Now we can visualize the data! Let’s see how the states compare</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(stops_per_year_normalized,</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> stops_per_1000, <span class="at">color =</span> state)) <span class="sc">+</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Vehicular Stops per 1,000 Residents"</span>,</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Stops per 1,000 Residents"</span>,</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"State"</span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(stops_per_year_normalized,</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> stops_per_1000, <span class="at">color =</span> state)) <span class="sc">+</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Vehicular Stops per 1,000 Residents"</span>,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Stops per 1,000 Residents"</span>,</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"State"</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="SQL_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="SQL_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>So, overall, California has more vehicular stops than Colorado and New York, and also has some more variation from year to year. Important to note, I just used the current state population and did not account for changes in the population from year to year.</p>
-<p>Next, now that I am more familiar with how these tables are organized and the specific variables available, I am interested in investigating California more closely to observe some more trends.</p>
+<p>Next, now that I am more familiar with how these tables are organized and the specific variables available, I am interested in investigating California more closely to observe some more trends. I am interested how gender affects citation rates, as in how often do men get a citation when they are pulled over compared to women?</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    subject_sex,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> n_stops,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">SUM</span>(citation_issued) <span class="kw">AS</span> n_with_citation,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="op">-</span> <span class="fu">SUM</span>(citation_issued) <span class="kw">AS</span> n_without_citation,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">AVG</span>(citation_issued) <span class="kw">AS</span> citation_rate</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ca_statewide_2023_01_26</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> subject_sex <span class="kw">IN</span> (<span class="st">'male'</span>, <span class="st">'female'</span>)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> subject_sex</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> subject_sex;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>2 records</caption>
+<colgroup>
+<col style="width: 17%">
+<col style="width: 12%">
+<col style="width: 22%">
+<col style="width: 27%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">subject_sex</th>
+<th style="text-align: right;">n_stops</th>
+<th style="text-align: right;">n_with_citation</th>
+<th style="text-align: right;">n_without_citation</th>
+<th style="text-align: right;">citation_rate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">female</td>
+<td style="text-align: right;">9616706</td>
+<td style="text-align: right;">134961</td>
+<td style="text-align: right;">9481745</td>
+<td style="text-align: right;">0.0199065</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">male</td>
+<td style="text-align: right;">22161713</td>
+<td style="text-align: right;">604164</td>
+<td style="text-align: right;">21557549</td>
+<td style="text-align: right;">0.0392061</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>From the above analysis, it is seen that males get citations when they are stopped more often than females. There are likely many variables going into this rate difference!</p>
+<p>From the analyses today, we can see that California has higher vehicular stops over time than Colorado and New York, and that males have higher citation rates than females in California.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbDisconnect</span>(con_traffic, <span class="at">shutdown =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Thanks for coming along for the ride today!</p>
 </section>
 <section id="references" class="level1">
 <h1>References</h1>

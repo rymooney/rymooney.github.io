@@ -6,7 +6,7 @@ author: "Ryan Mooney"
 # The task
 For today's project, I will be working with data from the [Stanford Open Policing Project](https://openpolicing.stanford.edu/) pubished by Pierson, et al. 2020. “[A Large-Scale Analysis of Racial Disparities in Police Stops Across the United States](https://www-nature-com.ccl.idm.oclc.org/articles/s41562-020-0858-1).” Nature Human Behaviour, 1–10. I will be investigating a few of the many tables contained within the database.
 
-First, let's set up the connection to the traffic database.
+First, let's set up the connection to the traffic database and upload the needed packages for later analyses.
 
 ```{r}
 con_traffic <- DBI::dbConnect(
@@ -35,88 +35,48 @@ DBI::dbListTables(con_traffic)
 ```{sql}
 #| connection: con_traffic
 
-SELECT * FROM co_statewide_2020_04_01 LIMIT 8;
+SELECT * FROM ca_statewide_2023_01_26 LIMIT 8;
 ```
 
 As I am from Colorado, I am curious to look more specifically at the state and how vehicular stops compare between some states I might want to live in (namely, Colorado, California, and New York). 
 
 First, I'd like to make a plot to show how vehicular stops have changes over the years in these three states.
 
+Now, I am going to try to UNION all three tables (co_statewide, ca_statewide, and ny_statewide), so that I can see how the states differ in their number of vehicular stops over the past few years. 
+
 ```{sql}
 #| connection: con_traffic
+#| output.var: stops_per_year
 
 SELECT
+    'Colorado' AS state,
     YEAR(date) AS year,
     COUNT(*) AS total_stops
 FROM co_statewide_2020_04_01
 WHERE type = 'vehicular'
-GROUP BY YEAR(date)
-ORDER BY YEAR(date);
-```
-```{r}
-co_stops_per_year <- dbGetQuery(
-  con_traffic,
-  "
-  SELECT
-      YEAR(date) AS year,
-      COUNT(*) AS total_stops
-  FROM co_statewide_2020_04_01
-  WHERE type = 'vehicular'
-  GROUP BY YEAR(date)
-  ORDER BY YEAR(date);
-  "
-)
-```
+GROUP BY state, YEAR(date)
 
-```{r}
-#| warning: FALSE
-#| message: FALSE
-ggplot(co_stops_per_year, aes(x = year, y = total_stops)) +
-  geom_line() +
-  geom_point() +
-  labs(
-    title = "Total Vehicular Stops in Colorado per Year",
-    x = "Year",
-    y = "Number of Stops"
-  )
-```
-Now, I am going to try to UNION all three tables (co_statewide, ca_statewide, and ny_statewide), so that I can see how the states differ in their number of vehicular stops over the past few years. 
+UNION ALL
 
-```{r}
-stops_per_year <- dbGetQuery(
-  con_traffic,
-  "
-  SELECT
-      'Colorado' AS state,
-      YEAR(date) AS year,
-      COUNT(*) AS total_stops
-  FROM co_statewide_2020_04_01
-  WHERE type = 'vehicular'
-  GROUP BY state, YEAR(date)
+ SELECT
+    'California' AS state,
+    YEAR(date) AS year,
+    COUNT(*) AS total_stops
+FROM ca_statewide_2023_01_26
+WHERE type = 'vehicular'
+GROUP BY state, YEAR(date)
 
-  UNION ALL
+UNION ALL
 
-  SELECT
-      'California' AS state,
-      YEAR(date) AS year,
-      COUNT(*) AS total_stops
-  FROM ca_statewide_2023_01_26
-  WHERE type = 'vehicular'
-  GROUP BY state, YEAR(date)
+SELECT
+    'New York' AS state,
+    YEAR(date) AS year,
+    COUNT(*) AS total_stops
+FROM ny_statewide_2020_04_01
+WHERE type = 'vehicular'
+GROUP BY state, YEAR(date)
 
-  UNION ALL
-
-  SELECT
-      'New York' AS state,
-      YEAR(date) AS year,
-      COUNT(*) AS total_stops
-  FROM ny_statewide_2020_04_01
-  WHERE type = 'vehicular'
-  GROUP BY state, YEAR(date)
-
-  ORDER BY year, state;
-  "
-)
+ORDER BY year, state;
 ```
 
 I will do some wrangling, as the first time I did the analysis below, I realized I should normalize the stops to the population size, since my analyis was making the stops in California appear much larger than the stops in Colorado and New York simply because it has a much larger state. 
@@ -157,12 +117,32 @@ ggplot(stops_per_year_normalized,
 
 So, overall, California has more vehicular stops than Colorado and New York, and also has some more variation from year to year. Important to note, I just used the current state population and did not account for changes in the population from year to year. 
 
-Next, now that I am more familiar with how these tables are organized and the specific variables available, I am interested in investigating California more closely to observe some more trends. 
+Next, now that I am more familiar with how these tables are organized and the specific variables available, I am interested in investigating California more closely to observe some more trends. I am interested how gender affects citation rates, as in how often do men get a citation when they are pulled over compared to women?
 
+
+```{sql}
+#| connection: con_traffic
+SELECT
+    subject_sex,
+    COUNT(*) AS n_stops,
+    SUM(citation_issued) AS n_with_citation,
+    COUNT(*) - SUM(citation_issued) AS n_without_citation,
+    AVG(citation_issued) AS citation_rate
+FROM ca_statewide_2023_01_26
+WHERE subject_sex IN ('male', 'female')
+GROUP BY subject_sex
+ORDER BY subject_sex;
+```
+
+From the above analysis, it is seen that males get citations when they are stopped more often than females. There are likely many variables going into this rate difference!
+
+From the analyses today, we can see that California has higher vehicular stops over time than Colorado and New York, and that males have higher citation rates than females in California. 
 ```{r}
 dbDisconnect(con_traffic, shutdown = TRUE)
 ```
 
+
+Thanks for coming along for the ride today!
 
 # References
 Pierson, E., Simoiu, C., Overgoor, J. et al. A large-scale analysis of racial disparities in police stops across the United States. Nat Hum Behav 4, 736–745 (2020).
