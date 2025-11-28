@@ -26,11 +26,9 @@ library(DBI)
 ```
 
 
-Let's have a look at all of the tables that are in the traffic database, so we know what we are working with.
-```{r}
-#| connection: con_air
-DBI::dbListTables(con_traffic)
-```
+There are many tables in the database, including three that I am particularly interested in. These data tables are called "ca_statewide_2023_01_26", "co_statewide_2020_04_01", and "ny_statewide_2020_04_01". These tables have all the statewide data for California, Colorado, and New York. Let's compare!
+
+To get a sense of the kinds of variables included in each set, let's look at the start of the California table. 
 
 ```{sql}
 #| connection: con_traffic
@@ -38,11 +36,9 @@ DBI::dbListTables(con_traffic)
 SELECT * FROM ca_statewide_2023_01_26 LIMIT 8;
 ```
 
-As I am from Colorado, I am curious to look more specifically at the state and how vehicular stops compare between some states I might want to live in (namely, Colorado, California, and New York). 
+First, I'd like to make a plot to show how vehicular stops have changed over the years in California, Colorado, and New York. 
 
-First, I'd like to make a plot to show how vehicular stops have changes over the years in these three states.
-
-Now, I am going to try to UNION all three tables (co_statewide, ca_statewide, and ny_statewide), so that I can see how the states differ in their number of vehicular stops over the past few years. 
+I am going to UNION ALL three tables (co_statewide, ca_statewide, and ny_statewide), so that I can have one large data set with the needed data for the three states. This way, I can do the wrangling on the three states seperately and use the UNION ALL to combine those wrangled tables. I am focused on only vehicular stops, so I will include a WHERE type = 'vehicular' statement. I will also GROUP BY state and year(date) so that I will have seperate count information for each year in each state. Let's do it!
 
 ```{sql}
 #| connection: con_traffic
@@ -79,7 +75,7 @@ GROUP BY state, YEAR(date)
 ORDER BY year, state;
 ```
 
-I will do some wrangling, as the first time I did the analysis below, I realized I should normalize the stops to the population size, since my analyis was making the stops in California appear much larger than the stops in Colorado and New York simply because it has a much larger state. 
+I will do some normalizing, as the first time I did the analysis below, I realized I should normalize the stops to the population size, since my analyis was making the stops in California appear much larger than the stops in Colorado and New York simply because it has a much larger state population. 
 ```{r}
 stops_per_year_normalized <- stops_per_year |>
   filter(!is.na(year)) |>
