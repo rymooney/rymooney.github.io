@@ -4,7 +4,7 @@ format: html
 author: "Ryan Mooney"
 ---
 # The task
-For today's project, I will be working with data from the [Stanford Open Policing Project](https://openpolicing.stanford.edu/) pubished by Pierson, et al. 2020. “[A Large-Scale Analysis of Racial Disparities in Police Stops Across the United States](https://www-nature-com.ccl.idm.oclc.org/articles/s41562-020-0858-1).” Nature Human Behaviour, 1–10. I will be investigating a few of the many tables contained within the database.
+For today's project, I will be working with data from the [Stanford Open Policing Project](https://openpolicing.stanford.edu/) pubished by Pierson, et al. (2020). I will be investigating a few of the many tables contained within the database.
 
 First, let's set up the connection to the traffic database and upload the needed packages for later analyses.
 
