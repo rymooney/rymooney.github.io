@@ -38,7 +38,7 @@ SELECT * FROM ca_statewide_2023_01_26 LIMIT 8;
 
 First, I'd like to make a plot to show how vehicular stops have changed over the years in California, Colorado, and New York. 
 
-I am going to UNION ALL three tables (co_statewide, ca_statewide, and ny_statewide), so that I can have one large data set with the needed data for the three states. This way, I can do the wrangling on the three states seperately and use the UNION ALL to combine those wrangled tables. I am focused on only vehicular stops, so I will include a WHERE type = 'vehicular' statement. I will also GROUP BY state and year(date) so that I will have seperate count information for each year in each state. Let's do it!
+I am going to UNION ALL three tables (co_statewide, ca_statewide, and ny_statewide), so that I can have one large data set with the needed data for the three states. This way, I can do the wrangling on the three states seperately and use the UNION ALL to combine those wrangled tables. I am focused on only vehicular stops, so I will include a WHERE type = 'vehicular' statement. I will also GROUP BY state and year(date) so that I will have seperate count information for each year in each state. I will store the following wrangled data in a dataframe called stops_per_year. Let's do it!
 
 ```{sql}
 #| connection: con_traffic
@@ -75,49 +75,32 @@ GROUP BY state, YEAR(date)
 ORDER BY year, state;
 ```
 
-I will do some normalizing, as the first time I did the analysis below, I realized I should normalize the stops to the population size, since my analyis was making the stops in California appear much larger than the stops in Colorado and New York simply because it has a much larger state population. 
-```{r}
-stops_per_year_normalized <- stops_per_year |>
-  filter(!is.na(year)) |>
-  mutate(
-    year = as.numeric(year),
-    total_stops = as.numeric(total_stops),
-    pop_avg = case_when(
-      state == "California" ~ 38359674,
-      state == "Colorado" ~  5279185,
-      state == "New York" ~ 19636586,
-    ),
-    stops_per_1000 = total_stops / pop_avg * 1000
-  )
-
-head(stops_per_year_normalized)
-```
-
-Now we can visualize the data! Let's see how the states compare 
+Now we can visualize the data! Let's see how the states compare when it comes to total stops per year!
 
 ```{r}
 #| message: FALSE
 #| warning: FALSE
 
-ggplot(stops_per_year_normalized,
-       aes(x = year, y = stops_per_1000, color = state)) +
+ggplot(stops_per_year,
+       aes(x = year, y = total_stops, color = state)) +
   geom_line() +
   geom_point() +
   labs(
-    title = "Vehicular Stops per 1,000 Residents",
+    title = "Vehicular Stops in CA, CO, NY",
     x = "Year",
-    y = "Stops per 1,000 Residents",
+    y = "Stops",
     color = "State"
   )
 ```
 
-So, overall, California has more vehicular stops than Colorado and New York, and also has some more variation from year to year. Important to note, I just used the current state population and did not account for changes in the population from year to year. 
+So, overall, California has more vehicular stops than Colorado and New York, and also has some more variation from year to year. Importantly, this is skewed upwards in the case of California because it has a much larger population!
 
 Next, now that I am more familiar with how these tables are organized and the specific variables available, I am interested in investigating California more closely to observe some more trends. I am interested how gender affects citation rates, as in how often do men get a citation when they are pulled over compared to women?
 
 
 ```{sql}
 #| connection: con_traffic
+#| output.var: ca_sex_citations
 SELECT
     subject_sex,
     COUNT(*) AS n_stops,
@@ -130,9 +113,24 @@ GROUP BY subject_sex
 ORDER BY subject_sex;
 ```
 
-From the above analysis, it is seen that males get citations when they are stopped more often than females. There are likely many variables going into this rate difference!
+Let's plot it!
+```{r}
+ggplot(ca_sex_citations,
+       aes(x = subject_sex, y = citation_rate)) +
+  geom_col() +
+  geom_text(
+    aes(label = citation_rate),
+    vjust = -0.5)+
+  labs(
+    title = "Citation Rate by Driver Sex in California",
+    x = "Driver Sex",
+    y = "Citation Rate"
+  )
+```
 
-From the analyses today, we can see that California has higher vehicular stops over time than Colorado and New York, and that males have higher citation rates than females in California. 
+From the above analysis, it is seen that males get citations when they are stopped more often than females. There are likely many variables going into this rate difference. This could be due to men being more aggressive or impulsive drivers. I was interested and did some quick research on this, and it has been found that younger drivers, those with powerful cars, and those with "macho" personalities are more likely to drive agressively (Krahé & Fenske, 2001). This lines up to my calculation of California citation rates. Interesting!
+
+From the analyses today, we can see that California has higher vehicular stops over time than Colorado and New York, and that males have higher citation rates than females in California. There are many, many variables that go into these kinds of analyses. These variables include population size, in the case of the first analysis, differences in driving behavior across states, and likely more social-related perception variables in the case of the difference in citation rates between men and women. 
 ```{r}
 dbDisconnect(con_traffic, shutdown = TRUE)
 ```
@@ -141,4 +139,6 @@ dbDisconnect(con_traffic, shutdown = TRUE)
 Thanks for coming along for the ride today!
 
 # References
+Krahé, B., & Fenske, I. Predicting aggressive driving behavior: The role of macho personality, age, and power of car. Aggressive Behavior: Official Journal of the International Society for Research on Aggression, 28(1), 21-29. (2002).
+
 Pierson, E., Simoiu, C., Overgoor, J. et al. A large-scale analysis of racial disparities in police stops across the United States. Nat Hum Behav 4, 736–745 (2020).

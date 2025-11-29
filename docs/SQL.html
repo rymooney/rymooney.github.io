@@ -494,7 +494,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>First, I’d like to make a plot to show how vehicular stops have changed over the years in California, Colorado, and New York.</p>
-<p>I am going to UNION ALL three tables (co_statewide, ca_statewide, and ny_statewide), so that I can have one large data set with the needed data for the three states. This way, I can do the wrangling on the three states seperately and use the UNION ALL to combine those wrangled tables. I am focused on only vehicular stops, so I will include a WHERE type = ‘vehicular’ statement. I will also GROUP BY state and year(date) so that I will have seperate count information for each year in each state. Let’s do it!</p>
+<p>I am going to UNION ALL three tables (co_statewide, ca_statewide, and ny_statewide), so that I can have one large data set with the needed data for the three states. This way, I can do the wrangling on the three states seperately and use the UNION ALL to combine those wrangled tables. I am focused on only vehicular stops, so I will include a WHERE type = ‘vehicular’ statement. I will also GROUP BY state and year(date) so that I will have seperate count information for each year in each state. I will store the following wrangled data in a dataframe called stops_per_year. Let’s do it!</p>
 <div class="cell" data-output.var="stops_per_year">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Colorado'</span> <span class="kw">AS</span> state,</span>
@@ -526,112 +526,71 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> <span class="dt">year</span>, state;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>I will do some normalizing, as the first time I did the analysis below, I realized I should normalize the stops to the population size, since my analyis was making the stops in California appear much larger than the stops in Colorado and New York simply because it has a much larger state population.</p>
+<p>Now we can visualize the data! Let’s see how the states compare when it comes to total stops per year!</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>stops_per_year_normalized <span class="ot">&lt;-</span> stops_per_year <span class="sc">|&gt;</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(year)) <span class="sc">|&gt;</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="fu">as.numeric</span>(year),</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_stops =</span> <span class="fu">as.numeric</span>(total_stops),</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">pop_avg =</span> <span class="fu">case_when</span>(</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>      state <span class="sc">==</span> <span class="st">"California"</span> <span class="sc">~</span> <span class="dv">38359674</span>,</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>      state <span class="sc">==</span> <span class="st">"Colorado"</span> <span class="sc">~</span>  <span class="dv">5279185</span>,</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>      state <span class="sc">==</span> <span class="st">"New York"</span> <span class="sc">~</span> <span class="dv">19636586</span>,</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">stops_per_1000 =</span> total_stops <span class="sc">/</span> pop_avg <span class="sc">*</span> <span class="dv">1000</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(stops_per_year_normalized)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>       state year total_stops  pop_avg stops_per_1000
-1 California 2009     2503272 38359674       65.25791
-2 California 2010     5075533 38359674      132.31429
-3   Colorado 2010      470284  5279185       89.08269
-4   New York 2010     1120192 19636586       57.04617
-5 California 2011     5061034 38359674      131.93631
-6   Colorado 2011      432101  5279185       81.84994</code></pre>
-</div>
-</div>
-<p>Now we can visualize the data! Let’s see how the states compare</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(stops_per_year_normalized,</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> stops_per_1000, <span class="at">color =</span> state)) <span class="sc">+</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Vehicular Stops per 1,000 Residents"</span>,</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Stops per 1,000 Residents"</span>,</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"State"</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(stops_per_year,</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> total_stops, <span class="at">color =</span> state)) <span class="sc">+</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Vehicular Stops in CA, CO, NY"</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Stops"</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"State"</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="SQL_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="SQL_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>So, overall, California has more vehicular stops than Colorado and New York, and also has some more variation from year to year. Important to note, I just used the current state population and did not account for changes in the population from year to year.</p>
+<p>So, overall, California has more vehicular stops than Colorado and New York, and also has some more variation from year to year. Importantly, this is skewed upwards in the case of California because it has a much larger population!</p>
 <p>Next, now that I am more familiar with how these tables are organized and the specific variables available, I am interested in investigating California more closely to observe some more trends. I am interested how gender affects citation rates, as in how often do men get a citation when they are pulled over compared to women?</p>
+<div class="cell" data-output.var="ca_sex_citations">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    subject_sex,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> n_stops,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">SUM</span>(citation_issued) <span class="kw">AS</span> n_with_citation,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="op">-</span> <span class="fu">SUM</span>(citation_issued) <span class="kw">AS</span> n_without_citation,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">AVG</span>(citation_issued) <span class="kw">AS</span> citation_rate</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ca_statewide_2023_01_26</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> subject_sex <span class="kw">IN</span> (<span class="st">'male'</span>, <span class="st">'female'</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> subject_sex</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> subject_sex;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Let’s plot it!</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    subject_sex,</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> n_stops,</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">SUM</span>(citation_issued) <span class="kw">AS</span> n_with_citation,</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="op">-</span> <span class="fu">SUM</span>(citation_issued) <span class="kw">AS</span> n_without_citation,</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">AVG</span>(citation_issued) <span class="kw">AS</span> citation_rate</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ca_statewide_2023_01_26</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> subject_sex <span class="kw">IN</span> (<span class="st">'male'</span>, <span class="st">'female'</span>)</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> subject_sex</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> subject_sex;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(ca_sex_citations,</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> subject_sex, <span class="at">y =</span> citation_rate)) <span class="sc">+</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">label =</span> citation_rate),</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.5</span>)<span class="sc">+</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Citation Rate by Driver Sex in California"</span>,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Driver Sex"</span>,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Citation Rate"</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<caption>2 records</caption>
-<colgroup>
-<col style="width: 17%">
-<col style="width: 12%">
-<col style="width: 22%">
-<col style="width: 27%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">subject_sex</th>
-<th style="text-align: right;">n_stops</th>
-<th style="text-align: right;">n_with_citation</th>
-<th style="text-align: right;">n_without_citation</th>
-<th style="text-align: right;">citation_rate</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">female</td>
-<td style="text-align: right;">9616706</td>
-<td style="text-align: right;">134961</td>
-<td style="text-align: right;">9481745</td>
-<td style="text-align: right;">0.0199065</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">male</td>
-<td style="text-align: right;">22161713</td>
-<td style="text-align: right;">604164</td>
-<td style="text-align: right;">21557549</td>
-<td style="text-align: right;">0.0392061</td>
-</tr>
-</tbody>
-</table>
+<div>
+<figure class="figure">
+<p><img src="SQL_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
-<p>From the above analysis, it is seen that males get citations when they are stopped more often than females. There are likely many variables going into this rate difference!</p>
-<p>From the analyses today, we can see that California has higher vehicular stops over time than Colorado and New York, and that males have higher citation rates than females in California.</p>
+</div>
+<p>From the above analysis, it is seen that males get citations when they are stopped more often than females. There are likely many variables going into this rate difference. This could be due to men being more aggressive or impulsive drivers. I was interested and did some quick research on this, and it has been found that younger drivers, those with powerful cars, and those with “macho” personalities are more likely to drive agressively (Krahé &amp; Fenske, 2001). This lines up to my calculation of California citation rates. Interesting!</p>
+<p>From the analyses today, we can see that California has higher vehicular stops over time than Colorado and New York, and that males have higher citation rates than females in California. There are many, many variables that go into these kinds of analyses. These variables include population size, in the case of the first analysis, differences in driving behavior across states, and likely more social-related perception variables in the case of the difference in citation rates between men and women.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbDisconnect</span>(con_traffic, <span class="at">shutdown =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbDisconnect</span>(con_traffic, <span class="at">shutdown =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Thanks for coming along for the ride today!</p>
 </section>
 <section id="references" class="level1">
 <h1>References</h1>
+<p>Krahé, B., &amp; Fenske, I. Predicting aggressive driving behavior: The role of macho personality, age, and power of car. Aggressive Behavior: Official Journal of the International Society for Research on Aggression, 28(1), 21-29. (2002).</p>
 <p>Pierson, E., Simoiu, C., Overgoor, J. et al.&nbsp;A large-scale analysis of racial disparities in police stops across the United States. Nat Hum Behav 4, 736–745 (2020).</p>
 
 
