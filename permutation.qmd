@@ -126,7 +126,7 @@ perm_stats |>
     summarize(p_val = mean(perm_mean_diff > obs_mean_diff))
 ```
 
-The permutation test yielded a p-value of 0, indicating that the observed difference in mean cell size between malignant and benign breast tumors (515.479) did not occur once in 1,000 random permutations of the data. This extremely small p-value provides very strong evidence against the null hypothesis that benign and malignant tumors have the same average cell size. Thus, the results suggest that malignant breast cancer cells have higher average sizes than benign cancer cells. This could mean that average cell size could serve as a potential quantitative metric for the rapid and automated classification of tumor malignancy.
+The permutation test yielded a p-value of 0, indicating that the observed difference in mean cell size between malignant and benign breast tumors (515.479) did not occur once in 1,000 random permutations of the data. This extremely small p-value provides very strong evidence against the null hypothesis that benign and malignant tumors have the same average cell size. Thus, I claim that **all** malignant breast cancer cells have higher average sizes than benign cancer cells. This mean that average cell size could potentially serve as a potential quantitative metric for the rapid and automated classification of tumor malignancy.
 
 # That's it!
 
