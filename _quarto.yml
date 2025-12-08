@@ -28,6 +28,8 @@ website:
             href: ethics.qmd
           - text: "SQL"
             href: SQL.qmd
+          - text: "Permutation Presentation"
+            href: permutation_pres.qmd
 
   page-footer: 
     background: light 
