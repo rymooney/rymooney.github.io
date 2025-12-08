@@ -8,23 +8,20 @@ As a research assisstant and independent research, I have had the chance to cont
 
 # Cyclodextrin Drug Interactions with Lipid Membranes
 
-![Cyclodextrin abstract image](images/CD_abstract.png){width=60%}
+![Cyclodextrin abstract image](images/CD_abstract.png){width="60%"}
 
-Ethan M. Fong, J. Sebastian D. Kinzie, Aaron Christopherson, Jacob K. Al-Hussieni, 
-Kevin Ye, Ananya Vinay, **Ryan Mooney**, and Malkiat S. Johal, [A Hydrophobic Goldilocks Zone for Cyclodextrin-Lipid-Membrane Interactions: Implications of Drug Hydrophobicity on Kinetics of Cholesterol Removal from Lipid Membranes](https://pubs-acs-org.ccl.idm.oclc.org/doi/pdf/10.1021/acs.langmuir.5c00786?ref=article_openPDF), *Langmuir*, 2025, **41** (25), 15909–15917.  
+Ethan M. Fong, J. Sebastian D. Kinzie, Aaron Christopherson, Jacob K. Al-Hussieni, Kevin Ye, Ananya Vinay, **Ryan Mooney**, and Malkiat S. Johal, [A Hydrophobic Goldilocks Zone for Cyclodextrin-Lipid-Membrane Interactions: Implications of Drug Hydrophobicity on Kinetics of Cholesterol Removal from Lipid Membranes](https://pubs-acs-org.ccl.idm.oclc.org/doi/pdf/10.1021/acs.langmuir.5c00786?ref=article_openPDF), *Langmuir*, 2025, **41** (25), 15909–15917.
 
+# Validation of protein-protein interactions
 
-# Validation of protein-protein interactions 
-
-![Protein-protein interaction abstract image](images/KGI.png){widht=60%}
+![Protein-protein interaction abstract image](images/KGI.png){widht="60%"}
 
 Paco, K., Paco-Mendivil, M., Zhang, Z., Zebardast, S., **Mooney, R. M.**, Davila, C., Yang, T., Bassi, S., Olatayinbo, P., Gonzales, V., Bin Ashraf, F., Condori Roman, I., Le Roch, K., Johal, M.S., Tolstorukov, I., Hernandez, J., Barroso da Silva, F.L., Lonardi, S., Sazinsky, M.H., Ray, A. [Fine-tuned Protein Language Model Identifies Antigen-specific B Cell Receptors from Immune Repertoires.](https://doi.org/10.1101/2025.10.30.685465), *bioRxiv*, 2025. (In preparation for submission to *Nature Biomedical Engineering*.)
 
 # Polyelectrolyte Molecular Weight Determination
 
-![Polyelectrlolyte Complexation Schematic](images/PEMU.png){width=60%}
-*In preparation for Analytical Chemistry*
+![Polyelectrlolyte Complexation Schematic](images/PEMU.png){width="60%"} *In preparation for Analytical Chemistry*
 
 # T cell Receptor-Public Neoantigen Binding
 
-![Neoantigen Generation and Presentation](images/NeoAg.png){width=60%}
+![Neoantigen Generation and Presentation](images/NeoAg.png){width="60%"}
