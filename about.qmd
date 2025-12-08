@@ -15,4 +15,4 @@ At Pomona College, I have been involved in research since my freshman year. In D
 
 I have also been fortunate enough to engage in research at Memorial Sloan Kettering Cancer Center under the guidance of Dr. Michael Gormally and Dr. Christopher Klebanoff. Here, I gained training in immuno-oncology and contributed to a project with the goals of designing immunotherapies for solid-phase cancers. Specifically, this project involved working with cell culture, ELISA, IncuCyte live-cell imaging, and flow cytometry to evaluate and quantify the killing of cancer cells by T cells transduced with cancer neoepitope-specific T cell receptors. I got to experiment with armoring our T cells with additional potency, in the form of constitutive cytokine (IL-18) secretion and by engineering CD8 co-receptor expression. Our results were tremendously promising, and in vivo trials of our work are beginning now!
 
-For more information on my research experience, please see my [Research Projects](rymooney.github.io/ResearchProjects) page.
+For more information on my research experience, please see my [Research Projects](https://rymooney.github.io/ResearchProjects) page.
