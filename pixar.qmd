@@ -47,3 +47,6 @@ ggplot(pixar_ratings_long, aes(x = film, y = score, color = rating_source)) +
   )
   
 ```
+
+# References
+“List of Pixar Films.” Wikipedia, Wikimedia Foundation, 4 Dec. 2025, [en.wikipedia.org/wiki/List_of_Pixar_films](en.wikipedia.org/wiki/List_of_Pixar_films). 
