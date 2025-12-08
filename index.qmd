@@ -1,9 +1,9 @@
 ---
 title: "Ryan Mooney"
-image: images/ryanmooney_image.jpg
+image: images/headshot_square.png
 toc: false
 about: 
-   template: jolla
+   template: trestles
    image-shape: rounded
    image-width: 20em
    links:
@@ -18,6 +18,8 @@ about:
       href: mailto:rmmj2023@mymail.pomona.edu
 ---
 
-Hi there! I am Ryan, a student at Pomona College majoring in Molecular Biology and minoring in Data Science. I am an aspiring biomedical researcher, with keen interests in cancer biology and immuno-oncology. Sequencing has revolutionized how we analyze genetic information, so minoring in data science has provided me with invaluable skills to approach translational research questions. I love learning, and pursuing a career in research is how I plan to continue doing what I love (to learn!). I am a rather crafty person, and I particularly enjoy knitting, sewing, and collaging.
+Hi there! I am Ryan, a student at Pomona College majoring in Molecular Biology. I am an aspiring biomedical researcher, with keen interests in cancer biology and immuno-oncology. Sequencing has revolutionized how we analyze genetic information, so spending time developing skills in data science has provided me with invaluable skills to approach translational research questions. I love learning, and pursuing a career in research is how I plan to continue doing what I love (to learn!). I am a rather crafty person, and I particularly enjoy knitting, sewing, and collaging.
+
+Please feel free to check out my [CV](https://drive.google.com/file/d/1w1SbAwWlfGOGqOSWWsFMGZmgbWWrx7zE/view?usp=sharing).
 
 Check out the pages on my site to learn more about me!

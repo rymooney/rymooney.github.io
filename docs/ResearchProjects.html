@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Ryan Mooney">
 
-<title>UNESCO – Ryan Mooney</title>
+<title>Research Projects – Ryan Mooney</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,41 +20,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -138,7 +104,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./ResearchProjects.html"> 
+    <a class="nav-link active" href="./ResearchProjects.html" aria-current="page"> 
 <span class="menu-text">Research Projects</span></a>
   </li>  
   <li class="nav-item dropdown ">
@@ -192,8 +158,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#the-data" id="toc-the-data" class="nav-link active" data-scroll-target="#the-data">The Data</a></li>
-  <li><a href="#lets-plot-the-data" id="toc-lets-plot-the-data" class="nav-link" data-scroll-target="#lets-plot-the-data">Let’s plot the data!</a></li>
+  <li><a href="#cyclodextrin-drug-interactions-with-lipid-membranes" id="toc-cyclodextrin-drug-interactions-with-lipid-membranes" class="nav-link active" data-scroll-target="#cyclodextrin-drug-interactions-with-lipid-membranes">Cyclodextrin Drug Interactions with Lipid Membranes</a></li>
+  <li><a href="#validation-of-protein-protein-interactions" id="toc-validation-of-protein-protein-interactions" class="nav-link" data-scroll-target="#validation-of-protein-protein-interactions">Validation of protein-protein interactions</a></li>
+  <li><a href="#polyelectrolyte-molecular-weight-determination" id="toc-polyelectrolyte-molecular-weight-determination" class="nav-link" data-scroll-target="#polyelectrolyte-molecular-weight-determination">Polyelectrolyte Molecular Weight Determination</a></li>
+  <li><a href="#t-cell-receptor-public-neoantigen-binding" id="toc-t-cell-receptor-public-neoantigen-binding" class="nav-link" data-scroll-target="#t-cell-receptor-public-neoantigen-binding">T cell Receptor-Public Neoantigen Binding</a></li>
   </ul>
 </nav>
     </div>
@@ -202,13 +170,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">UNESCO</h1>
+<h1 class="title">Research Projects</h1>
 </div>
 
 
 
 <div class="quarto-title-meta column-page-left">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Ryan Mooney </p>
+          </div>
+  </div>
     
   
     
@@ -219,44 +193,39 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<section id="the-data" class="level1">
-<h1>The Data</h1>
-<p>I wanted to explore a simple data set comparing UNESCO world heritage sites in Norway, Denmark, and Sweden. The original data is from <a href="https://whc.unesco.org/en/list">UNESCO</a> and was downloaded from <a href="https://github.com/rfordatascience/tidytuesday/blob/main/data/2024/2024-02-06/readme.md">TidyTuesday</a>. The data can be accessed from the {pixarfilms} R package by <a href="https://github.com/erictleung">Eric Leung</a>.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>unesco <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">'https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2024/2024-02-06/heritage.csv'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>unesco2 <span class="ot">&lt;-</span> unesco <span class="sc">|&gt;</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">c</span>(<span class="st">`</span><span class="at">2004</span><span class="st">`</span>, <span class="st">`</span><span class="at">2022</span><span class="st">`</span>),</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"year"</span>,</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"number_of_sites"</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</section>
-<section id="lets-plot-the-data" class="level1">
-<h1>Let’s plot the data!</h1>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(unesco2, <span class="fu">aes</span>(<span class="at">x =</span> country, <span class="at">y =</span> number_of_sites, <span class="at">color =</span> year)) <span class="sc">+</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"UNESCO World Heritage Sites"</span>,</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Country"</span>,</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of Sites"</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
+<p>As a research assisstant and independent research, I have had the chance to contribute to many research projects, which I will detail below! All the topics below are areas I have research experience in, culminating from two full years of academic research at Pomona College and one full-time summer at Memorial Sloan Kettering Cancer Center.</p>
+<section id="cyclodextrin-drug-interactions-with-lipid-membranes" class="level1">
+<h1>Cyclodextrin Drug Interactions with Lipid Membranes</h1>
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="UNESCO_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="images/CD_abstract.png" class="img-fluid figure-img" style="width:60.0%"></p>
+<figcaption>Cyclodextrin abstract image</figcaption>
 </figure>
 </div>
+<p>Ethan M. Fong, J. Sebastian D. Kinzie, Aaron Christopherson, Jacob K. Al-Hussieni, Kevin Ye, Ananya Vinay, <strong>Ryan Mooney</strong>, and Malkiat S. Johal, <a href="https://pubs-acs-org.ccl.idm.oclc.org/doi/pdf/10.1021/acs.langmuir.5c00786?ref=article_openPDF">A Hydrophobic Goldilocks Zone for Cyclodextrin-Lipid-Membrane Interactions: Implications of Drug Hydrophobicity on Kinetics of Cholesterol Removal from Lipid Membranes</a>, <em>Langmuir</em>, 2025, <strong>41</strong> (25), 15909–15917.</p>
+</section>
+<section id="validation-of-protein-protein-interactions" class="level1">
+<h1>Validation of protein-protein interactions</h1>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/KGI.png" class="img-fluid figure-img" data-widht="60%"></p>
+<figcaption>Protein-protein interaction abstract image</figcaption>
+</figure>
 </div>
+<p>Paco, K., Paco-Mendivil, M., Zhang, Z., Zebardast, S., <strong>Mooney, R. M.</strong>, Davila, C., Yang, T., Bassi, S., Olatayinbo, P., Gonzales, V., Bin Ashraf, F., Condori Roman, I., Le Roch, K., Johal, M.S., Tolstorukov, I., Hernandez, J., Barroso da Silva, F.L., Lonardi, S., Sazinsky, M.H., Ray, A. <a href="https://doi.org/10.1101/2025.10.30.685465">Fine-tuned Protein Language Model Identifies Antigen-specific B Cell Receptors from Immune Repertoires.</a>, <em>bioRxiv</em>, 2025. (In preparation for submission to <em>Nature Biomedical Engineering</em>.)</p>
+</section>
+<section id="polyelectrolyte-molecular-weight-determination" class="level1">
+<h1>Polyelectrolyte Molecular Weight Determination</h1>
+<p><img src="images/PEMU.png" class="img-fluid" style="width:60.0%" alt="Polyelectrlolyte Complexation Schematic"> <em>In preparation for Analytical Chemistry</em></p>
+</section>
+<section id="t-cell-receptor-public-neoantigen-binding" class="level1">
+<h1>T cell Receptor-Public Neoantigen Binding</h1>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/NeoAg.png" class="img-fluid figure-img" style="width:60.0%"></p>
+<figcaption>Neoantigen Generation and Presentation</figcaption>
+</figure>
 </div>
-<p>Showing the number of World Heritage Sites in Norway, Denmark, and Sweden across 2004 to 2022.</p>
-<p>#References UNESCO World Heritage Centre - World Heritage List, <a href="whc.unesco.org/en/list/">whc.unesco.org/en/list/</a>.</p>
 
 
 </section>

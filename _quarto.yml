@@ -10,7 +10,9 @@ website:
         text: Home
       - href: about.qmd
         text: About
-      - text: Data Viz
+      - href: ResearchProjects.qmd
+        text: "Research Projects"
+      - text: "Data Science"
         menu: 
           - text: "Pixar Ratings"
             href: pixar.qmd
@@ -18,16 +20,15 @@ website:
             href: UNESCO.qmd
           - text: "Selected Literary Prizes"
             href: tidytuesday10_28.qmd
-      - href: TextAnalysis.qmd
-        text: Text Analysis
-      - href: permutation.qmd
-        text: "Permutation Test"
-      - href: ethics.qmd
-        text: "Data Science Ethics"
-      - href: SQL.qmd
-        text: "SQL"
-      
-            
+          - text: "Text Analysis"
+            href: TextAnalysis.qmd
+          - text: "Permutation Test"
+            href: permutation.qmd
+          - text: "Data Science Ethics"
+            href: ethics.qmd
+          - text: "SQL"
+            href: SQL.qmd
+
   page-footer: 
     background: light 
     right: This website is built with {{< fa heart title="a heart" >}}, [{{< fa brands github title="GitHub octocat logo" >}}](https://https://github.com/rymooney/rymooney.github.io){target=_blank}, [{{< fa brands r-project title="R Project" >}}](https://www.r-project.org/about.html){target=_blank} and [Quarto](https://quarto.org/){target=_blank}
