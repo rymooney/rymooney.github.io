@@ -505,7 +505,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">YEAR</span>(<span class="dt">date</span>) <span class="kw">AS</span> <span class="dt">year</span>,</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> total_stops</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> co_statewide_2020_04_01</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> <span class="kw">type</span> <span class="op">=</span> <span class="st">'vehicular'</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> <span class="kw">type</span> <span class="op">=</span> <span class="st">'vehicular'</span> <span class="kw">AND</span> <span class="dt">YEAR</span>(<span class="dt">date</span>) <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">AND</span> <span class="dt">YEAR</span>(<span class="dt">date</span>)<span class="op">&gt;</span><span class="dv">2008</span></span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> state, <span class="dt">YEAR</span>(<span class="dt">date</span>)</span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="kw">UNION</span> <span class="kw">ALL</span></span>
@@ -536,12 +536,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> total_stops, <span class="at">color =</span> state)) <span class="sc">+</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Vehicular Stops in CA, CO, NY"</span>,</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Stops"</span>,</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"State"</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="dv">2009</span><span class="sc">:</span><span class="dv">2020</span>) <span class="sc">+</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Vehicular Stops in CA, CO, NY"</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Stops"</span>,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"State"</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -550,7 +552,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p>So, overall, California has more vehicular stops than Colorado and New York, and also has some more variation from year to year. Importantly, this is skewed upwards in the case of California because it has a much larger population!</p>
+<p>So, overall, California has more vehicular stops than Colorado and New York, and also has some more variation from year to year. Importantly, this is skewed upwards in the case of California because it has a much larger population! It is also likely true that for California, the years 2009 and 2016 have partial data, given their sudden drops from the rest of the data.</p>
 <p>Next, now that I am more familiar with how these tables are organized and the specific variables available, I am interested in investigating California more closely to observe some more trends. I am interested how gender affects citation rates, as in how often do men get a citation when they are pulled over compared to women?</p>
 <div class="cell" data-output.var="ca_sex_citations">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a></span>
@@ -587,6 +589,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>From the above analysis, it is seen that males get citations when they are stopped more often than females. There are likely many variables going into this rate difference. This could be due to men being more aggressive or impulsive drivers. I was interested and did some quick research on this, and it has been found that younger drivers, those with powerful cars, and those with “macho” personalities are more likely to drive agressively (Krahé &amp; Fenske, 2001). This lines up to my calculation of California citation rates. Interesting!</p>
+<p>Notably, these citation rates seem really low, so this is likely a variable that is not often included in the data set, but from the sample we have, the relative proportion of citations given to men and women are likely accurate.</p>
 <p>From the analyses today, we can see that California has higher vehicular stops over time than Colorado and New York, and that males have higher citation rates than females in California. There are many, many variables that go into these kinds of analyses. These variables include population size, in the case of the first analysis, differences in driving behavior across states, and likely more social-related perception variables in the case of the difference in citation rates between men and women.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbDisconnect</span>(con_traffic, <span class="at">shutdown =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
