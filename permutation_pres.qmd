@@ -24,8 +24,8 @@ If you are here from my website, and want to go back, please click [here](https:
 The data set is from William Wolberg et. al, (1993)  in [Biomedical Image Processing and Biomedical Visualization.](https://minds.wisconsin.edu/bitstream/handle/1793/59692/TR1131.pdf;jsessionid=D67421CDB9C9D60F48E00CFD511DD259?sequence=1), which contains data on 568 breast cancer tumor samples.
 The data set was downloaded from [UC Irvine Machine Learning Repository](https://archive.ics.uci.edu/dataset/17/breast%2Bcancer%2Bwisconsin%2Bdiagnostic?utm_source=chatgpt.com).
 
-Needed packages:
 ```{r}
+#| echo: false
 library(tidyverse)
 library(readr)
 ```

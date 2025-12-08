@@ -11,7 +11,7 @@
     "href": "permutation_pres.html#the-data",
     "title": "Are Malignant Cancer Cells Really Bigger?",
     "section": "The data",
-    "text": "The data\nThe data set is from William Wolberg et. al, (1993) in Biomedical Image Processing and Biomedical Visualization., which contains data on 568 breast cancer tumor samples. The data set was downloaded from UC Irvine Machine Learning Repository.\nNeeded packages:\n\nlibrary(tidyverse)\nlibrary(readr)"
+    "text": "The data\nThe data set is from William Wolberg et. al, (1993) in Biomedical Image Processing and Biomedical Visualization., which contains data on 568 breast cancer tumor samples. The data set was downloaded from UC Irvine Machine Learning Repository."
   },
   {
     "objectID": "permutation_pres.html#what-does-the-data-look-like",
