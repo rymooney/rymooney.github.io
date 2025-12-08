@@ -1074,16 +1074,11 @@ Ryan Mooney
 <section id="the-data" class="slide level2">
 <h2>The data</h2>
 <p>The data set is from William Wolberg et. al, (1993) in <a href="https://minds.wisconsin.edu/bitstream/handle/1793/59692/TR1131.pdf;jsessionid=D67421CDB9C9D60F48E00CFD511DD259?sequence=1">Biomedical Image Processing and Biomedical Visualization.</a>, which contains data on 568 breast cancer tumor samples. The data set was downloaded from <a href="https://archive.ics.uci.edu/dataset/17/breast%2Bcancer%2Bwisconsin%2Bdiagnostic?utm_source=chatgpt.com">UC Irvine Machine Learning Repository</a>.</p>
-<p>Needed packages:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-2"><a></a><span class="fu">library</span>(readr)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
 </section>
 <section id="what-does-the-data-look-like" class="slide level2">
 <h2>What does the data look like?</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a><span class="fu">head</span>(tumor_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">head</span>(tumor_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 32
         id diagnosis radius_mean texture_mean perimeter_mean area_mean
@@ -1118,9 +1113,9 @@ Ryan Mooney
 <section id="lets-have-a-look-at-the-observed-test-statistic" class="slide level2">
 <h2>Let’s have a look at the observed test statistic</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a>tumor_data <span class="sc">|&gt;</span> </span>
-<span id="cb4-2"><a></a>  <span class="fu">group_by</span>(diagnosis) <span class="sc">|&gt;</span> </span>
-<span id="cb4-3"><a></a>  <span class="fu">summarize</span>(<span class="at">ave_area =</span> <span class="fu">mean</span>(area_mean))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>tumor_data <span class="sc">|&gt;</span> </span>
+<span id="cb3-2"><a></a>  <span class="fu">group_by</span>(diagnosis) <span class="sc">|&gt;</span> </span>
+<span id="cb3-3"><a></a>  <span class="fu">summarize</span>(<span class="at">ave_area =</span> <span class="fu">mean</span>(area_mean))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 2
   diagnosis ave_area
@@ -1138,24 +1133,24 @@ Ryan Mooney
 <section id="the-permutation-test" class="slide level2">
 <h2>The Permutation Test</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a><span class="fu">set.seed</span>(<span class="dv">47</span>)</span>
-<span id="cb6-2"><a></a>perm_data <span class="ot">&lt;-</span> <span class="cf">function</span>(rep, data) {</span>
-<span id="cb6-3"><a></a>  data <span class="sc">|&gt;</span></span>
-<span id="cb6-4"><a></a>    <span class="fu">select</span>(diagnosis, area_mean) <span class="sc">|&gt;</span></span>
-<span id="cb6-5"><a></a>    <span class="fu">mutate</span>(<span class="at">area_perm =</span> <span class="fu">sample</span>(area_mean, <span class="at">replace =</span> <span class="cn">FALSE</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb6-6"><a></a>    <span class="fu">group_by</span>(diagnosis) <span class="sc">|&gt;</span></span>
-<span id="cb6-7"><a></a>    <span class="fu">summarize</span>(</span>
-<span id="cb6-8"><a></a>      <span class="at">obs_mean  =</span> <span class="fu">mean</span>(area_mean),</span>
-<span id="cb6-9"><a></a>      <span class="at">perm_mean =</span> <span class="fu">mean</span>(area_perm)) <span class="sc">|&gt;</span></span>
-<span id="cb6-10"><a></a>    <span class="fu">summarize</span>(</span>
-<span id="cb6-11"><a></a>      <span class="at">obs_mean_diff  =</span> <span class="fu">diff</span>(obs_mean),</span>
-<span id="cb6-12"><a></a>      <span class="at">perm_mean_diff =</span> <span class="fu">diff</span>(perm_mean),</span>
-<span id="cb6-13"><a></a>      <span class="at">rep =</span> rep</span>
-<span id="cb6-14"><a></a>    )</span>
-<span id="cb6-15"><a></a>}</span>
-<span id="cb6-16"><a></a></span>
-<span id="cb6-17"><a></a><span class="fu">map</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>), perm_data, <span class="at">data =</span> tumor_data) <span class="sc">|&gt;</span> </span>
-<span id="cb6-18"><a></a>  <span class="fu">list_rbind</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="fu">set.seed</span>(<span class="dv">47</span>)</span>
+<span id="cb5-2"><a></a>perm_data <span class="ot">&lt;-</span> <span class="cf">function</span>(rep, data) {</span>
+<span id="cb5-3"><a></a>  data <span class="sc">|&gt;</span></span>
+<span id="cb5-4"><a></a>    <span class="fu">select</span>(diagnosis, area_mean) <span class="sc">|&gt;</span></span>
+<span id="cb5-5"><a></a>    <span class="fu">mutate</span>(<span class="at">area_perm =</span> <span class="fu">sample</span>(area_mean, <span class="at">replace =</span> <span class="cn">FALSE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb5-6"><a></a>    <span class="fu">group_by</span>(diagnosis) <span class="sc">|&gt;</span></span>
+<span id="cb5-7"><a></a>    <span class="fu">summarize</span>(</span>
+<span id="cb5-8"><a></a>      <span class="at">obs_mean  =</span> <span class="fu">mean</span>(area_mean),</span>
+<span id="cb5-9"><a></a>      <span class="at">perm_mean =</span> <span class="fu">mean</span>(area_perm)) <span class="sc">|&gt;</span></span>
+<span id="cb5-10"><a></a>    <span class="fu">summarize</span>(</span>
+<span id="cb5-11"><a></a>      <span class="at">obs_mean_diff  =</span> <span class="fu">diff</span>(obs_mean),</span>
+<span id="cb5-12"><a></a>      <span class="at">perm_mean_diff =</span> <span class="fu">diff</span>(perm_mean),</span>
+<span id="cb5-13"><a></a>      <span class="at">rep =</span> rep</span>
+<span id="cb5-14"><a></a>    )</span>
+<span id="cb5-15"><a></a>}</span>
+<span id="cb5-16"><a></a></span>
+<span id="cb5-17"><a></a><span class="fu">map</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>), perm_data, <span class="at">data =</span> tumor_data) <span class="sc">|&gt;</span> </span>
+<span id="cb5-18"><a></a>  <span class="fu">list_rbind</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1,000 × 3
    obs_mean_diff perm_mean_diff   rep
@@ -1181,8 +1176,8 @@ Ryan Mooney
 <section id="whats-the-p-value" class="slide level2">
 <h2>What’s the p value?</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a>perm_stats <span class="sc">|&gt;</span> </span>
-<span id="cb8-2"><a></a>    <span class="fu">summarize</span>(<span class="at">p_val =</span> <span class="fu">mean</span>(perm_mean_diff <span class="sc">&gt;</span> obs_mean_diff))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>perm_stats <span class="sc">|&gt;</span> </span>
+<span id="cb7-2"><a></a>    <span class="fu">summarize</span>(<span class="at">p_val =</span> <span class="fu">mean</span>(perm_mean_diff <span class="sc">&gt;</span> obs_mean_diff))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 1
   p_val
