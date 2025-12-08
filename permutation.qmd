@@ -131,3 +131,8 @@ The permutation test yielded a p-value of 0, indicating that the observed differ
 # That's it!
 
 Thanks for coming along for the ride today!
+
+# References
+Street, W.N., Wolberg, W.H., & Mangasarian, O.L. “Nuclear feature extraction for breast tumor diagnosis.” (1993) Proc. SPIE 1905: Biomedical Image Processing and Biomedical Visualization. https://doi.org/10.1117/12.148698
+
+Wolberg, W., Mangasarian, O., Street, N., & Street, W. “Breast Cancer Wisconsin (Diagnostic)” (1993) UCI Machine Learning Repository. https://doi.org/10.24432/C5DW2B
