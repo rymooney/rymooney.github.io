@@ -2,6 +2,10 @@
 title: "SQL"
 format: html
 author: "Ryan Mooney"
+execute: 
+  warning: false
+  message: false
+  cache: true
 ---
 
 # The task
