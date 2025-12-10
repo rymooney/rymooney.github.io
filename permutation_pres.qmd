@@ -63,17 +63,19 @@ Circularity, nucleation, rigidity, size?
 
 ## Hypotheses
 
-The following hypotheses are rooted in the fact that malignant cancer cells go through the cell cycle faster, including the G1 and G2 phases, which are periods of cell growth. So, I hypothesize that malignant cancer cells in general are larger on average than benign cancer cells.
-
 **The null hypothesis:** benign tumors and malignant tumors have cells of *the same* average area.
 
 **The alternative hypothesis:** malignant tumors have *larger* average cell areas.
 
 ## The Variables of Interest and Test Statistic
 
-The variables I will be investigating are diagnosis (whether the tumor is malignant or benign), designated by an 'M' or a 'B' in the diagnosis column, and mean tumor cell area, which a calculated value for each sample in the area_mean column.
+The variables 
+- diagnosis (whether the tumor is malignant or benign), 
+    - designated by an 'M' or a 'B' in the diagnosis column 
+- mean tumor cell area
+    - a calculated value for each sample in the area_mean column.
 
-The *statistic* to test the potential difference in cell area between benign and malignant tumors is the **difference in means** between area in the benign and malignant tumor samples.
+The *test statistic* is the **difference in means** between area in the benign and malignant tumor samples.
 
 ## Let's have a look at the observed test statistic
 
@@ -146,11 +148,19 @@ perm_stats |>
 
 ## Conclusions
 
-The permutation test yielded a p-value of 0, indicating that the observed difference in mean cell size between malignant and benign breast tumors (515.479) did not occur once in 1,000 random permutations of the data. This extremely small p-value provides very strong evidence against the null hypothesis that benign and malignant tumors have the same average cell size. Thus, I claim that, in general, malignant breast cancer cells have higher average sizes than benign breast cancer cells.
+The permutation test gave a p-value of 0.
+
+The observed difference in mean cell size between malignant and benign breast tumors was 515.479.
+
+This difference did not occur once in 1,000 random permutations.
+
+The extremely small p-value provides very strong evidence against the null hypothesis.
+
+Therefore, the results suggest that **all** malignant breast cancer cells have larger average sizes than benign breast cancer cells.
 
 ## Implications
 
-This mean that average cell size could potentially serve as a potential quantitative metric for the rapid and automated classification of tumor malignancy.
+This means that average cell size could potentially serve as a potential quantitative metric for the rapid and automated classification of tumor malignancy.
 
 ## References
 “Normal and Cancer Cells Structure: Image Details.” NCI Visuals Online, National Cancer Institute, (2001).  visualsonline.cancer.gov/details.cfm?imageid=2512. 
