@@ -12,7 +12,7 @@ As a research assisstant and independent research, I have had the chance to cont
 
 Ethan M. Fong, J. Sebastian D. Kinzie, Aaron Christopherson, Jacob K. Al-Hussieni, Kevin Ye, Ananya Vinay, **Ryan Mooney**, and Malkiat S. Johal, [A Hydrophobic Goldilocks Zone for Cyclodextrin-Lipid-Membrane Interactions: Implications of Drug Hydrophobicity on Kinetics of Cholesterol Removal from Lipid Membranes](https://pubs-acs-org.ccl.idm.oclc.org/doi/pdf/10.1021/acs.langmuir.5c00786?ref=article_openPDF), *Langmuir*, 2025, **41** (25), 15909–15917.
 
-This work was culminated from my first research semester at Pomona College, where I was trained on surface-sensitive instrumentation Quartz Crystal Microbalance with Dissipation monitoring (QCM-D). 
+This work was culminated from my first research semester at Pomona College, where I was trained on surface-sensitive instrumentation Quartz Crystal Microbalance with Dissipation monitoring (QCM-D).
 
 # Validation of protein-protein interactions
 
@@ -20,13 +20,13 @@ This work was culminated from my first research semester at Pomona College, wher
 
 Paco, K., Paco-Mendivil, M., Zhang, Z., Zebardast, S., **Mooney, R. M.**, Davila, C., Yang, T., Bassi, S., Olatayinbo, P., Gonzales, V., Bin Ashraf, F., Condori Roman, I., Le Roch, K., Johal, M.S., Tolstorukov, I., Hernandez, J., Barroso da Silva, F.L., Lonardi, S., Sazinsky, M.H., Ray, A. [Fine-tuned Protein Language Model Identifies Antigen-specific B Cell Receptors from Immune Repertoires.](https://doi.org/10.1101/2025.10.30.685465), *bioRxiv*, 2025. (In preparation for submission to *Nature Biomedical Engineering*.)
 
-In this work, I leaded the experimental validation of protein-protein binders predicted by large language models. To do this, I leveraged Localized Surface Plasmon Resonance (LSPR) to assay the binding a panel of predicted nanobodies to the Sars-CoV-2 RBD domain.  
+In this work, I leaded the experimental validation of protein-protein binders predicted by large language models. To do this, I leveraged Localized Surface Plasmon Resonance (LSPR) to assay the binding a panel of predicted nanobodies to the Sars-CoV-2 RBD domain.
 
 # Polyelectrolyte Molecular Weight Determination
 
 ![Polyelectrlolyte Complexation Schematic](images/PEMU.png){width="60%"} *In preparation for Analytical Chemistry*
 
-This work culminated after my first full-time Summer at Pomona College, where I gained expertise in LSPR. We developed a novel method to utilize real-time binding data between two polyelectrolytes to determine number-average molecular weight. This work compliments cononical instrumentation like Size Exclusion Chromatography which is difficult to aply to polyelectrolyte systems. 
+This work culminated after my first full-time Summer at Pomona College, where I gained expertise in LSPR. We developed a novel method to utilize real-time binding data between two polyelectrolytes to determine number-average molecular weight. This work compliments cononical instrumentation like Size Exclusion Chromatography which is difficult to aply to polyelectrolyte systems.
 
 # T cell Receptor-Public Neoantigen Binding
 

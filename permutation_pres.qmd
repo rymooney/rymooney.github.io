@@ -13,7 +13,9 @@ execute:
   warning: false
   message: false
 ---
+
 ## The goal
+
 *Determine if there is a correlation between diagnosis of a tumor and tumor size.*
 
 The method to answer this question: permutation test!
@@ -21,8 +23,8 @@ The method to answer this question: permutation test!
 If you are here from my website, and want to go back, please click [here](https://rymooney.github.io/)!
 
 ## The data
-The data set is from William Wolberg et. al, (1993)  in [Biomedical Image Processing and Biomedical Visualization.](https://minds.wisconsin.edu/bitstream/handle/1793/59692/TR1131.pdf;jsessionid=D67421CDB9C9D60F48E00CFD511DD259?sequence=1), which contains data on 568 breast cancer tumor samples.
-The data set was downloaded from [UC Irvine Machine Learning Repository](https://archive.ics.uci.edu/dataset/17/breast%2Bcancer%2Bwisconsin%2Bdiagnostic?utm_source=chatgpt.com).
+
+The data set is from William Wolberg et. al, (1993) in [Biomedical Image Processing and Biomedical Visualization.](https://minds.wisconsin.edu/bitstream/handle/1793/59692/TR1131.pdf;jsessionid=D67421CDB9C9D60F48E00CFD511DD259?sequence=1), which contains data on 568 breast cancer tumor samples. The data set was downloaded from [UC Irvine Machine Learning Repository](https://archive.ics.uci.edu/dataset/17/breast%2Bcancer%2Bwisconsin%2Bdiagnostic?utm_source=chatgpt.com).
 
 ```{r}
 #| echo: false
@@ -30,8 +32,8 @@ library(tidyverse)
 library(readr)
 ```
 
-
 ## What does the data look like?
+
 ```{r}
 #| message: false
 #| warning: false
@@ -53,15 +55,22 @@ colnames(tumor_data) <- c(
 ```{r}
 head(tumor_data)
 ```
+##
+![Benign vs Malignant Tumors (National Cancer Institute, 2001)](images/tumor.png){width="60%"}
+
+Major Differences:
+Circularity, nucleation, rigidity, size?
+
 ## Hypotheses
 
-The following hypotheses are rooted in the fact that malignant cancer cells go through the cell cycle faster, including the G1 and G2 phases, which are periods of cell growth. So, I hypothesize that malignant cancer cells in general are larger on average than benign cancer cells. 
+The following hypotheses are rooted in the fact that malignant cancer cells go through the cell cycle faster, including the G1 and G2 phases, which are periods of cell growth. So, I hypothesize that malignant cancer cells in general are larger on average than benign cancer cells.
 
-**The null hypothesis:** benign tumors and malignant tumors have cells of *the same* average area. 
+**The null hypothesis:** benign tumors and malignant tumors have cells of *the same* average area.
 
-**The alternative hypothesis:**  malignant tumors have *larger* average cell areas.
+**The alternative hypothesis:** malignant tumors have *larger* average cell areas.
 
 ## The Variables of Interest and Test Statistic
+
 The variables I will be investigating are diagnosis (whether the tumor is malignant or benign), designated by an 'M' or a 'B' in the diagnosis column, and mean tumor cell area, which a calculated value for each sample in the area_mean column.
 
 The *statistic* to test the potential difference in cell area between benign and malignant tumors is the **difference in means** between area in the benign and malignant tumor samples.
@@ -74,7 +83,7 @@ tumor_data |>
   summarize(ave_area = mean(area_mean))
 ```
 
-##
+## 
 
 ```{r}
 #| echo: false
@@ -82,9 +91,11 @@ tumor_data |>
   ggplot(aes(x = diagnosis, y = area_mean)) + 
   geom_boxplot()
 ```
+
 So, it looks like the mean area of malignant tumor cells is larger than that of benign tumor cells. However, is that **generalizable** to other breast tumors? Off to the permutation test!
 
 ## The Permutation Test
+
 ```{r}
 set.seed(47)
 perm_data <- function(rep, data) {
@@ -107,6 +118,7 @@ map(c(1:1000), perm_data, data = tumor_data) |>
 ```
 
 ## Visualizing the null distribution
+
 ```{r}
 #| echo: false
 set.seed(47)
@@ -124,19 +136,25 @@ perm_stats |>
     x = "Mean Difference"
   )
 ```
+
 ## What's the p value?
+
 ```{r}
 perm_stats |> 
     summarize(p_val = mean(perm_mean_diff > obs_mean_diff))
 ```
 
 ## Conclusions
+
 The permutation test yielded a p-value of 0, indicating that the observed difference in mean cell size between malignant and benign breast tumors (515.479) did not occur once in 1,000 random permutations of the data. This extremely small p-value provides very strong evidence against the null hypothesis that benign and malignant tumors have the same average cell size. Thus, I claim that, in general, malignant breast cancer cells have higher average sizes than benign breast cancer cells.
 
 ## Implications
+
 This mean that average cell size could potentially serve as a potential quantitative metric for the rapid and automated classification of tumor malignancy.
 
 ## References
+“Normal and Cancer Cells Structure: Image Details.” NCI Visuals Online, National Cancer Institute, (2001).  visualsonline.cancer.gov/details.cfm?imageid=2512. 
+
 Street, W.N., Wolberg, W.H., & Mangasarian, O.L. “Nuclear feature extraction for breast tumor diagnosis.” (1993) Proc. SPIE 1905: Biomedical Image Processing and Biomedical Visualization. https://doi.org/10.1117/12.148698
 
 Wolberg, W., Mangasarian, O., Street, N., & Street, W. “Breast Cancer Wisconsin (Diagnostic)” (1993) UCI Machine Learning Repository. https://doi.org/10.24432/C5DW2B
