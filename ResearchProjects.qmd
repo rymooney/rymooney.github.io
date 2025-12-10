@@ -26,8 +26,13 @@ In this work, I leaded the experimental validation of protein-protein binders pr
 
 ![Polyelectrlolyte Complexation Schematic](images/PEMU.png){width="60%"} *In preparation for Analytical Chemistry*
 
-This work culminated after my first full-time Summer at Pomona College, where I gained expertise in LSPR. We developed a novel method to utilize real-time binding data between two polyelectrolytes to determine number-average molecular weight. This work compliments cononical instrumentation like Size Exclusion Chromatography which is difficult to aply to polyelectrolyte systems.
+This work culminated after my first full-time Summer at Pomona College, where I gained expertise in LSPR. We developed a novel method to utilize real-time binding data between two polyelectrolytes to determine number-average molecular weight. This work compliments cononical instrumentation like Size Exclusion Chromatography which is difficult to apply to polyelectrolyte systems.
 
 # T cell Receptor-Public Neoantigen Binding
 
 ![Neoantigen Generation and Presentation](images/NeoAg.png){width="60%"}
+
+
+This work is the culmination of my summer research internship at Memorial Sloan Kettering Cancer Center. This work involved preclinical characterization of a novel  T cell therapy targeting cancers with TP53 R175H mutations, one of the most common cancer-driving mutations, but also one with no approved targeted therapies. My summer internship involved detailed preclinical characterization of this new therapy, including peptide–HLA avidity testing, cytokine activation assays, flow-cytometry-based phenotyping, amino-acid mutagenesis scanning of off-targets, and live-cell functional tumor killing assays. I am continuing this work now back at Pomona College from a more biophysical perspective to understand how our identified T cell receptor mounts robust immune response.
+
+If you are interested in this work, please feel free to check out my [poster](https://drive.google.com/file/d/14-yJEqi9qNjRBmXlxzhr2XLB70CLhTi7/view?usp=sharing), presented at Pomona College's Summer Research Symposium.
