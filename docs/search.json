@@ -25,14 +25,14 @@
     "href": "permutation_pres.html#hypotheses",
     "title": "Are Malignant Cancer Cells Really Bigger?",
     "section": "Hypotheses",
-    "text": "Hypotheses\nThe following hypotheses are rooted in the fact that malignant cancer cells go through the cell cycle faster, including the G1 and G2 phases, which are periods of cell growth. So, I hypothesize that malignant cancer cells in general are larger on average than benign cancer cells.\nThe null hypothesis: benign tumors and malignant tumors have cells of the same average area.\nThe alternative hypothesis: malignant tumors have larger average cell areas."
+    "text": "Hypotheses\nThe null hypothesis: benign tumors and malignant tumors have cells of the same average area.\nThe alternative hypothesis: malignant tumors have larger average cell areas."
   },
   {
     "objectID": "permutation_pres.html#the-variables-of-interest-and-test-statistic",
     "href": "permutation_pres.html#the-variables-of-interest-and-test-statistic",
     "title": "Are Malignant Cancer Cells Really Bigger?",
     "section": "The Variables of Interest and Test Statistic",
-    "text": "The Variables of Interest and Test Statistic\nThe variables I will be investigating are diagnosis (whether the tumor is malignant or benign), designated by an ‘M’ or a ‘B’ in the diagnosis column, and mean tumor cell area, which a calculated value for each sample in the area_mean column.\nThe statistic to test the potential difference in cell area between benign and malignant tumors is the difference in means between area in the benign and malignant tumor samples."
+    "text": "The Variables of Interest and Test Statistic\nThe variables - diagnosis (whether the tumor is malignant or benign), - designated by an ‘M’ or a ‘B’ in the diagnosis column - mean tumor cell area - a calculated value for each sample in the area_mean column.\nThe test statistic is the difference in means between area in the benign and malignant tumor samples."
   },
   {
     "objectID": "permutation_pres.html#lets-have-a-look-at-the-observed-test-statistic",
@@ -74,14 +74,14 @@
     "href": "permutation_pres.html#conclusions",
     "title": "Are Malignant Cancer Cells Really Bigger?",
     "section": "Conclusions",
-    "text": "Conclusions\nThe permutation test yielded a p-value of 0, indicating that the observed difference in mean cell size between malignant and benign breast tumors (515.479) did not occur once in 1,000 random permutations of the data. This extremely small p-value provides very strong evidence against the null hypothesis that benign and malignant tumors have the same average cell size. Thus, I claim that, in general, malignant breast cancer cells have higher average sizes than benign breast cancer cells."
+    "text": "Conclusions\nThe permutation test gave a p-value of 0.\nThe observed difference in mean cell size between malignant and benign breast tumors was 515.479.\nThis difference did not occur once in 1,000 random permutations.\nThe extremely small p-value provides very strong evidence against the null hypothesis.\nTherefore, the results suggest that all malignant breast cancer cells have larger average sizes than benign breast cancer cells."
   },
   {
     "objectID": "permutation_pres.html#implications",
     "href": "permutation_pres.html#implications",
     "title": "Are Malignant Cancer Cells Really Bigger?",
     "section": "Implications",
-    "text": "Implications\nThis mean that average cell size could potentially serve as a potential quantitative metric for the rapid and automated classification of tumor malignancy."
+    "text": "Implications\nThis means that average cell size could potentially serve as a potential quantitative metric for the rapid and automated classification of tumor malignancy."
   },
   {
     "objectID": "permutation_pres.html#references",
