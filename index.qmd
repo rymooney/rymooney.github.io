@@ -1,6 +1,6 @@
 ---
 title: "Ryan Mooney"
-image: images/headshot_square.png
+image: images/headshot2.png
 toc: false
 about: 
    template: trestles
