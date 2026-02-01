@@ -24,7 +24,9 @@ In this work, I leaded the experimental validation of protein-protein binders pr
 
 # Polyelectrolyte Molecular Weight Determination
 
-![Polyelectrlolyte Complexation Schematic](images/PEMU.png){width="60%"} *In preparation for Analytical Chemistry*
+![Polyelectrlolyte Complexation Schematic](images/PEMU.png){width="60%"}
+
+Mooney, R. M., Brainin, C., Johal, M. “[An LSPR-Based Kinetic Framework for Polyelectrolyte Molecular Weight Determination: A Proof-of-Concept Study](https://pubs-acs-org.ccl.idm.oclc.org/doi/10.1021/acs.analchem.5c05449).” Analytical Chemistry (2026).
 
 This work culminated after my first full-time Summer at Pomona College, where I gained expertise in LSPR. We developed a novel method to utilize real-time binding data between two polyelectrolytes to determine number-average molecular weight. This work compliments cononical instrumentation like Size Exclusion Chromatography which is difficult to apply to polyelectrolyte systems.
 
