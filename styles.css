@@ -1,1 +1,8 @@
 /* css styles */
+.about-entity {
+    max-width: 1400px;
+}
+
+.about-contents {
+    max-width: 900px;
+}
