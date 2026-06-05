@@ -23,11 +23,8 @@ about:
 # Ryan Mooney
 
 ### Goldwater Scholar • Beckman Scholar
-### Cancer Immunology • Biophysics • Translational Research
 
-## Investigating how T cells recognize cancer
-
-I am a Molecular Biology student at **Pomona College** interested in cancer immunology, mechanobiology, and translational oncology. My research combines **biophysical approaches, computational analysis, and molecular biology** to understand how immune cells recognize and respond to cancer-specific neoantigens.
+I am a Molecular Biology student at **Pomona College** interested in cancer immunology, mechanobiology, and translational oncology. My research combines **biophysical approaches, computational analysis, and molecular biology** to understand how immune cells recognize and respond to cancer-specific neoantigens. I am passionate about **cancer immunology, biophysics, and translational research.**
 
 Currently, I am studying the **kinetic and mechanical determinants of T-cell receptor (TCR) recognition** of neoantigens and developing quantitative methods to characterize biomolecular interactions using **surface plasmon resonance (SPR)**.
 
