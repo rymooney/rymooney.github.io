@@ -38,7 +38,7 @@ format:
   html:
     theme: trestles
     css: styles.css
-    toc: true
+    toc: false
     page-layout: full
 
 editor: visual
