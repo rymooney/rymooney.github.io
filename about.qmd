@@ -7,15 +7,13 @@ format: html
 
 I am a [Goldwater Scholar](https://goldwaterscholarship.gov/) and [Beckman Scholar](https://www.beckman-foundation.org/programs/beckman-scholars/) pursuing a B.A. in [Molecular Biology](https://www.pomona.edu/academics/majors/molecular-biology) with a minor in [Mathematics](https://www.pomona.edu/academics/departments/mathematics-statistics) at Pomona College. My academic interests lie at the intersection of cancer immunology, biophysics, and quantitative biology, where I am fascinated by how molecular interactions govern cellular behavior.
 
-I am originally from Denver, Colorado, and I grew up in a large family with three older sisters who have been some of my greatest role models. Their encouragement helped cultivate my curiosity and drive to pursue scientific research. Since arriving at Pomona in 2023, I have sought opportunities to combine rigorous experimentation with quantitative analysis to better understand biological systems and contribute to translational research.
+I am originally from Denver, Colorado, and I grew up in a large family with three older sisters who have been some of my greatest role models. Their encouragement helped cultivate my curiosity and drive to pursue scientific research. Since arriving at Pomona in 2023, I have sought out research opportunities to better understand biological systems and contribute to translational research.
 
 # Research
 
 My research experiences span biomaterials, biophysics, and cancer immunology. In the laboratory of Dr. Malkiat Johal at Pomona College, I investigate biomolecular interactions using quartz crystal microbalance with dissipation monitoring (QCM-D) and localized surface plasmon resonance (LSPR). My projects have focused on understanding binding mechanisms and developing quantitative approaches to characterize complex molecular systems, contributing to multiple publications and ongoing studies.
 
-In the summer of 2025, I joined Memorial Sloan Kettering Cancer Center, where I trained in immuno-oncology and adoptive cell therapy research. There, I helped engineer and evaluate neoantigen-specific TCR-T cells using techniques including flow cytometry, ELISA, IncuCyte live-cell imaging, and mammalian cell culture. My work examined strategies such as IL-18 armoring and CD8 co-receptor expression to enhance anti-tumor activity, with projects progressing toward in vivo evaluation.
-
-Across these experiences, I have become particularly interested in understanding how molecular recognition and cellular signaling can be leveraged to develop more effective cancer immunotherapies.
+In the summer of 2025, I joined Memorial Sloan Kettering Cancer Center, where I trained in immuno-oncology and adoptive cell therapy research under Dr. Christopher Klebanoff and Dr. Michael Gormally. There, I helped engineer and evaluate neoantigen-specific TCR-T cells using techniques including flow cytometry, ELISA, IncuCyte live-cell imaging, and mammalian cell culture. My work examined strategies such as IL-18 armoring and CD8 co-receptor expression to enhance T cell anti-tumor activity, with projects now progressing toward in vivo evaluation.
 
 For additional details about my projects, publications, and presentations, please visit my [Research Projects](https://rymooney.github.io/ResearchProjects) page.
 
