@@ -12,6 +12,10 @@ website:
         text: About
       - href: ResearchProjects.qmd
         text: "Research Projects"
+      - text: "Binding Kinetics Modeling"
+        menu:
+          - text: "Single Cycle Kinetics"
+            href: SingleCycleKinetics.qmd
       - text: "Data Science"
         menu: 
           - text: "Pixar Ratings"
