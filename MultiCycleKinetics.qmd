@@ -1,0 +1,513 @@
+---
+title: "Multi Cycle Kinetics"
+format: html
+author: Ryan Mooney
+---
+
+Now, let's work through the data analysis of the other type of binding kinetics experiment we perform in Dr. Malkiat Johal's lab. This type of experiment is a multi cycle kinetics experiment (MCK), and it is the most commonly used experiment in our lab. This type of experiment requires the immobilization of one chemical species (ligand) onto a sensor, recording the binding of the binding partner (analyte), and running an analyte concentration gradient with full regeneration of the underlying ligand surface between injections. The data we are working with today comes from my first first-author paper (Moonet et al., Anal. Chem. 2026). In this experiment, I was recording the binding between two polyelectrolytes (PEI and PAZO). PEI was used as the analyte in solution and PAZO the immobilized ligand. 5 concentrations of PEI were recorded, ranging from 1.72 uM to 0.1075 uM. Let's import and visualize the raw data.
+
+```{r}
+#| label: create-csv-files
+#| include: false
+
+library(tibble)
+library(readr)
+
+#---------------------------
+# 1.7200 µM
+#---------------------------
+PEI_1720 <- tribble(
+  ~Time, ~RU,
+  0.48, 15.89,
+  2.81, 66.50,
+  5.79, 135.51,
+  7.26, 180.70,
+  10.32, 246.37,
+  15.02, 316.52,
+  19.86, 357.91,
+  25.83, 388.62,
+  33.71, 411.66,
+  41.56, 423.00,
+  50.26, 429.38,
+  58.35, 432.63,
+  67.39, 432.73
+)
+
+#---------------------------
+# 0.8600 µM
+#---------------------------
+PEI_0860 <- tribble(
+  ~Time, ~RU,
+  1.74, 26.84,
+  5.67, 71.41,
+  9.76, 130.08,
+  12.50, 175.27,
+  16.02, 223.69,
+  20.92, 262.36,
+  27.56, 292.60,
+  34.33, 314.05,
+  40.73, 330.24,
+  46.09, 340.51,
+  51.77, 348.70,
+  58.88, 355.71,
+  69.05, 359.07
+)
+
+#---------------------------
+# 0.4300 µM
+#---------------------------
+PEI_0430 <- tribble(
+  ~Time, ~RU,
+  1.74, 15.59,
+  7.40, 49.26,
+  11.46, 90.10,
+  14.64, 126.50,
+  19.64, 171.67,
+  25.81, 210.14,
+  30.50, 227.11,
+  36.55, 247.71,
+  43.78, 267.82,
+  51.15, 282.52,
+  59.65, 296.86,
+  64.55, 298.37,
+  69.03, 302.72
+)
+
+#---------------------------
+# 0.2150 µM
+#---------------------------
+PEI_0215 <- tribble(
+  ~Time, ~RU,
+  1.52, 14.821,
+  6.49, 25.93,
+  12.37, 58.21,
+  16.59, 79.51,
+  20.99, 97.15,
+  26.64, 127.36,
+  30.87, 145.92,
+  34.79, 159.82,
+  39.98, 174.42,
+  44.72, 188.25,
+  50.49, 201.19,
+  57.64, 216.24,
+  68.00, 229.96
+)
+
+#---------------------------
+# 0.1075 µM
+#---------------------------
+PEI_01075 <- tribble(
+  ~Time, ~RU,
+  1.60, 10.32,
+  6.68, 20.87,
+  12.65, 26.45,
+  17.56, 46.55,
+  22.78, 53.43,
+  27.06, 66.39,
+  31.62, 79.35,
+  36.65, 90.75,
+  42.26, 99.74,
+  47.17, 105.75,
+  51.95, 109.59,
+  58.27, 114.66,
+  69.03, 119.78
+)
+
+# Write CSV files
+write_csv(PEI_1720, "PEI_1720.csv")
+write_csv(PEI_0860, "PEI_0860.csv")
+write_csv(PEI_0430, "PEI_0430.csv")
+write_csv(PEI_0215, "PEI_0215.csv")
+write_csv(PEI_01075, "PEI_01075.csv")
+```
+
+```{r}
+#| message: false
+#| warning: false
+library(tidyverse)
+library(minpack.lm)
+
+PEI_1720 <- read.csv("PEI_1720.csv")
+PEI_0860 <- read.csv("PEI_0860.csv")
+PEI_0430 <- read.csv("PEI_0430.csv")
+PEI_0215 <- read.csv("PEI_0215.csv")
+PEI_01075 <- read.csv("PEI_01075.csv")
+
+bind_rows(
+  mutate(PEI_1720, Conc = "1.720 μM"),
+  mutate(PEI_0860, Conc = "0.860 μM"),
+  mutate(PEI_0430, Conc = "0.430 μM"),
+  mutate(PEI_0215, Conc = "0.215 μM"),
+  mutate(PEI_01075, Conc = "0.1075 μM")
+) |>
+
+ggplot(aes(Time, RU, color = Conc)) +
+  geom_line(linewidth = 1) +
+  labs(
+    title = "Multi-Cycle Kinetics Sensorgrams",
+    x = "Time (s)",
+    y = "Response (RU)"
+  ) +
+  theme_classic(base_size = 14)
+```
+
+Gorgeous! We see clear, concentration-dependent binding.
+
+## The Mathematical Model
+
+For a simple reversible interaction, we have
+
+$$
+A + B \rightleftharpoons AB
+$$
+
+where
+
+-   \(A\) = PEI in solution (analyte)
+-   \(B\) = immobilized PAZO
+-   (AB) = surface-bound complex
+
+The kinetics of a simple 1:1 Langmuir interaction are described by the differential equation
+
+$$
+\frac{dR}{dt}
+=
+k_{\mathrm{on}}\,C\left(R_{\max}-R\right)
+-
+k_{\mathrm{off}}R
+$$
+
+where
+
+-   \(R\) is the SPR response (RU) at time (t),
+-   (R\_{\max}) is the maximum binding response,
+-   (k\_{\mathrm{on}}) is the association rate constant ((\mu\mathrm{M}^{-1},^\mathrm{s}{-1})),
+-   (k\_{\mathrm{off}}) is the dissociation rate constant ((\mathrm{s}\^{-1})), and
+-   \(C\) is the analyte concentration.
+
+During each association phase, the analyte concentration is constant,
+
+$$
+C(t)=C_0,
+$$
+
+so the governing equation becomes
+
+$$
+\frac{dR}{dt}
+=
+k_{\mathrm{on}}\,C_0\left(R_{\max}-R\right)
+-
+k_{\mathrm{off}}R.
+$$
+
+The analytical solution to this differential equation is
+
+$$
+R(t)
+=
+R_{\mathrm{eq}}
+\left(
+1-e^{-k_{\mathrm{obs}}t}
+\right),
+$$
+
+where
+
+$$
+k_{\mathrm{obs}}
+=
+k_{\mathrm{on}}C_0
++
+k_{\mathrm{off}}
+$$
+
+and (R\_{\mathrm{eq}}) is the equilibrium response at that concentration.
+
+Unlike single-cycle kinetics, each concentration is analyzed independently. Therefore, every sensorgram can be fit separately to determine the observed association rate constant ((k\_{\mathrm{obs}})) and the equilibrium response ((R\_{\mathrm{eq}})).
+
+The relationship between (k\_{\mathrm{obs}}) and analyte concentration is linear,
+
+$$
+k_{\mathrm{obs}}
+=
+k_{\mathrm{on}}[PEI]
++
+k_{\mathrm{off}},
+$$
+
+allowing the kinetic parameters to be determined by linear regression. The slope of the line gives the association rate constant ((k\_{\mathrm{on}})), while the y-intercept gives the dissociation rate constant ((k\_{\mathrm{off}})). The equilibrium dissociation constant is then calculated as
+
+$$
+K_D
+=
+\frac{k_{\mathrm{off}}}{k_{\mathrm{on}}}.
+$$
+
+Now, let's fit each association curve and extract the kinetic parameters!
+
+```{r}
+library(tidyverse)
+library(minpack.lm)
+
+############################################################
+# Concentrations (µM)
+############################################################
+
+datasets <- list(
+  "1.7200" = PEI_1720,
+  "0.8600" = PEI_0860,
+  "0.4300" = PEI_0430,
+  "0.2150" = PEI_0215,
+  "0.1075" = PEI_01075
+)
+
+############################################################
+# One-step association model
+############################################################
+
+assoc_model <- function(time, RUeq, kobs){
+  RUeq * (1 - exp(-kobs * time))
+}
+
+############################################################
+# Fit each concentration
+############################################################
+
+kineticfits <- map_df(names(datasets), function(conc){
+
+  dat <- datasets[[conc]]
+
+  fit <- nlsLM(
+    RU ~ assoc_model(Time, RUeq, kobs),
+    data = dat,
+    start = list(
+      RUeq = max(dat$RU),
+      kobs = 0.03
+    )
+  )
+
+  tibble(
+    concentration = as.numeric(conc),
+    RUeq = coef(fit)["RUeq"],
+    kobs = coef(fit)["kobs"]
+  )
+})
+
+############################################################
+# Save fitted values
+############################################################
+
+write.csv(
+  kineticfits,
+  "kineticfits.csv",
+  row.names = FALSE
+)
+
+print(kineticfits)
+
+############################################################
+# Linear fit
+############################################################
+
+linearfit <- lm(kobs ~ concentration,
+                data = kineticfits)
+
+summary(linearfit)
+
+kon <- coef(linearfit)[2]
+koff <- coef(linearfit)[1]
+KD <- koff / kon
+
+cat("\n")
+cat("kon =", kon, "µM^-1 s^-1\n")
+cat("koff =", koff, "s^-1\n")
+cat("KD =", KD, "µM\n")
+
+############################################################
+# Predicted line
+############################################################
+
+x <- seq(
+  min(kineticfits$concentration),
+  max(kineticfits$concentration),
+  length.out = 200
+)
+
+pred <- tibble(
+  concentration = x,
+  kobs = predict(
+    linearfit,
+    newdata = data.frame(concentration = x)
+  )
+)
+
+
+############################################################
+# Plot
+############################################################
+
+ggplot(kineticfits,
+       aes(concentration, kobs)) +
+
+  geom_point(size = 3) +
+
+  geom_line(
+    data = pred,
+    linewidth = 1,
+    colour = "red"
+  ) +
+
+  labs(
+    title = expression(k[obs]~"vs. PEI Concentration"),
+    x = expression("[PEI] ("*mu*"M)"),
+    y = expression(k[obs]~"(s"^{-1}*")")
+  ) +
+
+  annotate(
+    "text",
+    x = max(kineticfits$concentration)*0.60,
+    y = max(kineticfits$kobs),
+    hjust = 0,
+    label = paste0(
+      "kon = ", signif(kon,4), " µM^-1 s^-1\n",
+      "koff = ", signif(koff,4), " s^-1\n",
+      "KD = ", signif(KD,4), " µM"
+    )
+  ) +
+
+  theme_classic(base_size = 14)
+```
+
+```{r}
+print(kineticfits)
+```
+
+From the fitted values of k\_{\mathrm{on}} and k\_{\mathrm{off}}, we can take the ratio and get K\_{\mathrm{D}}. Here, we get 0.3612 uM.
+
+# The Langmuir Model
+
+Importantly, we also fit a value of RUeq for each concentration, the maximum response recorded from Importantly, this kinetic analysis does not for any effect of diffusion-contro and may oversimplify the kinetics and miss important mechanistic insight. The equilibrium response ((R\_{\mathrm{eq}})) obtained from each association fit can also be analyzed using a standard Langmuir adsorption isotherm. Each sensorgram can be fit to
+
+$$
+R(t)=R_{\mathrm{eq}}\left(1-e^{-k_{\mathrm{obs}}t}\right),
+$$
+
+where (R\_{\mathrm{eq}}) is the fitted equilibrium response at each PEI concentration.
+
+Because (R\_{\mathrm{eq}}) follows a Langmuir adsorption isotherm,
+
+$$
+R_{\mathrm{eq}}
+=
+R_{\max}
+\left(
+\frac{k_{\mathrm{on}}[\mathrm{PEI}]}
+{k_{\mathrm{on}}[\mathrm{PEI}]+k_{\mathrm{off}}}
+\right)
+=
+R_{\max}
+\left(
+\frac{[\mathrm{PEI}]}
+{[\mathrm{PEI}]+K_D}
+\right),
+$$
+
+where
+
+$$
+K_D=\frac{k_{\mathrm{off}}}{k_{\mathrm{on}}}.
+$$
+
+Thus, plotting (R\_{\mathrm{eq}}) versus PEI concentration and fitting the Langmuir isotherm provides an independent estimate of the equilibrium dissociation constant ((K_D)).
+
+Let's do the fit to this model!
+
+```{r}
+###############################################################
+# Fit
+###############################################################
+
+langmuir_fit <- nlsLM(
+  RUeq ~ Rmax * concentration / (concentration + KD),
+  data = kineticfits,
+  start = list(
+    Rmax = max(kineticfits$RUeq),
+    KD = median(kineticfits$concentration)
+  )
+)
+
+summary(langmuir_fit)
+
+###############################################################
+# Extract fitted parameters
+###############################################################
+
+pars <- coef(langmuir_fit)
+
+Rmax <- pars["Rmax"]
+KD <- pars["KD"]
+
+cat("Rmax =", Rmax, "RU\n")
+cat("KD =", KD, "µM\n")
+
+###############################################################
+# Generate fitted curve
+###############################################################
+
+fitcurve <- tibble(
+  concentration = seq(
+    min(kineticfits$concentration),
+    max(kineticfits$concentration),
+    length.out = 300
+  )
+)
+
+fitcurve$RUeq <- predict(
+  langmuir_fit,
+  newdata = fitcurve
+)
+
+###############################################################
+# Plot
+###############################################################
+
+ggplot(kineticfits,
+       aes(concentration, RUeq)) +
+
+  geom_point(size = 3) +
+
+  geom_line(
+    data = fitcurve,
+    aes(concentration, RUeq),
+    linewidth = 1,
+    colour = "red"
+  ) +
+
+  labs(
+    title = "Langmuir Isotherm",
+    x = expression("[PEI] ("*mu*"M)"),
+    y = expression(RU[eq]*" (RU)")
+  ) +
+
+  annotate(
+    "text",
+    x = max(kineticfits$concentration)*0.55,
+    y = max(kineticfits$RUeq),
+    hjust = 0,
+    label = paste0(
+      "Rmax = ", round(Rmax,1), " RU\n",
+      "KD = ", signif(KD,3), " µM"
+    )
+  ) +
+
+  theme_classic(base_size = 14)
+```
+
+As you can see, we get a different value for K_D depending on the model we choose to fit the data to. The value we get from the kinetic fit (let's call it K_D,kin) and the Langmuir Isotherm (let's call it K_D,eq) will differ specifically if there is a significant contribution of diffusion on the binding kinetics. When macromolecules take time to diffuse through solution, that time can actually be on the scale, or slower, than the binding reaction itself, becoming rate-limiting.
+
+# Quantifying diffusion
+
+Using K_D values from both the kinetic and equilibrium models, we can quantify the effect of diffusion using the ratio, R, of the extracted kinetic models. Specifically, $$
+R=\frac{K_{D,\mathrm{kin}}}{K_{D,\mathrm{eqm}}}
+$$. In the current experiment, we get R = 2.93, suggesting a substantial diffusion contribution to the reaction kinetics. The diffusion-control fraction (1-1/R) is 65.7%, indicating that the observed reaction is significantly diffusion-controlled, about 2/3 of the binding kinetics can be attributed to diffusion effects!

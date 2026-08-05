@@ -16,6 +16,8 @@ website:
         menu:
           - text: "Single Cycle Kinetics"
             href: SingleCycleKinetics.qmd
+          - text: "Multi Cycle Kinetics"
+            href: MultiCycleKinetics.qmd
       - text: "Data Science"
         menu: 
           - text: "Pixar Ratings"
