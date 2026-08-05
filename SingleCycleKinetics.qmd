@@ -4,22 +4,22 @@ format: html
 author: "Ryan Mooney"
 ---
 
-In my research in surface chemistry with Dr. Malkiat Johal, I have gained practice analyzing multiple types of kinetics experiments. Today, I will walk through how we typically analyze data from single cycle kinetics experiments to determine the on- and off-rate of an interaction and the binding constant (KD). Response Units (RU) are the output of the instrument Surface Plasmon Resonance (SPR), which uses a sensor with a gold nanoparticle layer to measure binding to that surface. 
+In my research in surface chemistry with Dr. Malkiat Johal, I have gained practice analyzing multiple types of kinetics experiments. Today, I will walk through how we typically analyze data from single cycle kinetics experiments to determine the on- and off-rate of an interaction and the binding constant (KD). Response Units (RU) are the output of the instrument Surface Plasmon Resonance (SPR), which uses a sensor with a gold nanoparticle layer to measure binding to that surface.
 
-I am working with a model dataset SCK that contains data in the format time, RU. Here were the parameters used in the experiment: 
+I am working with a model dataset SCK that contains data in the format time, RU. Here were the parameters used in the experiment:
 
-Concentrations:	1.5, 3, 6, 12, 24 nM
+Concentrations: 1.5, 3, 6, 12, 24 nM
 
-Association time:	120 s each
+Association time: 120 s each
 
-Pause between injections:	30 s
+Pause between injections: 30 s
 
-Final dissociation:	600 s
+Final dissociation: 600 s
 
-Maximum response:	~7 RU
+Maximum response: \~7 RU
 
 |    Injection | Start (s) | End (s) | Concentration (nM) |
-| -----------: | --------: | ------: | -----------------: |
+|-------------:|----------:|--------:|-------------------:|
 |            1 |         0 |     120 |                1.5 |
 |            2 |       150 |     270 |                  3 |
 |            3 |       300 |     420 |                  6 |
@@ -38,7 +38,8 @@ library(minpack.lm)
 SCK <- read.csv("SCK.csv")
 ```
 
-Here is what a typical SPR sensorgram looks like: 
+Here is what a typical SPR sensorgram looks like:
+
 ```{r}
 ggplot(SCK, aes(x = time, y = response)) +
   geom_line() +
@@ -49,15 +50,14 @@ ggplot(SCK, aes(x = time, y = response)) +
   ) +
   theme_classic(base_size = 14)
 ```
+
 # The Mathematical Model
+
 For a simple reversible interaction, we have:
 
 A+B⇌AB
 
-where
-A = analyte (in solution)
-B = immobilized ligand
-AB = bound complex
+where A = analyte (in solution) B = immobilized ligand AB = bound complex
 
 The kinetics of a 1:1 Langmuir interaction are described by the differential equation
 
@@ -71,11 +71,11 @@ $$
 
 where
 
-- $R(t)$ is the SPR response (RU) at time $t$,
-- $R_{\max}$ is the maximum binding response,
-- $k_a$ is the association rate constant (M$^{-1}$ s$^{-1}$),
-- $k_d$ is the dissociation rate constant (s$^{-1}$), and
-- $C(t)$ is the analyte concentration as a function of time.
+-   $R(t)$ is the SPR response (RU) at time $t$,
+-   $R_{\max}$ is the maximum binding response,
+-   $k_a$ is the association rate constant (M$^{-1}$ s$^{-1}$),
+-   $k_d$ is the dissociation rate constant (s$^{-1}$), and
+-   $C(t)$ is the analyte concentration as a function of time.
 
 During each association phase,
 
@@ -115,7 +115,7 @@ $$
 
 where $R_0$ is the response at the beginning of the dissociation phase.
 
-Now, let's run the global fit on our data! 
+Now, let's run the global fit on our data!
 
 ```{r}
 ###############################################################
@@ -212,8 +212,8 @@ cat("KD:", KD, "M\n")
 ###############################################################
 best <- simulate.sensorgram(pars, SCK$time)
 ```
-From this iterative fit to the Langmuir 1:1 ODE, we get estimates for our **ka, kd, Rmax, and KD.** 
 
+From this iterative fit to the Langmuir 1:1 ODE, we get estimates for our **ka, kd, Rmax, and KD.**
 
 And, let's plot the fitted curve!
 

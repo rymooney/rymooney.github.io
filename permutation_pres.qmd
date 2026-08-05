@@ -55,11 +55,12 @@ colnames(tumor_data) <- c(
 ```{r}
 head(tumor_data)
 ```
-##
+
+## 
+
 ![Benign vs Malignant Tumors (National Cancer Institute, 2001)](images/tumor.png){width="60%"}
 
-Major Differences:
-Circularity, nucleation, rigidity, size?
+Major Differences: Circularity, nucleation, rigidity, size?
 
 ## Hypotheses
 
@@ -69,11 +70,7 @@ Circularity, nucleation, rigidity, size?
 
 ## The Variables of Interest and Test Statistic
 
-The variables 
-- diagnosis (whether the tumor is malignant or benign), 
-    - designated by an 'M' or a 'B' in the diagnosis column 
-- mean tumor cell area
-    - a calculated value for each sample in the area_mean column.
+The variables - diagnosis (whether the tumor is malignant or benign), - designated by an 'M' or a 'B' in the diagnosis column - mean tumor cell area - a calculated value for each sample in the area_mean column.
 
 The *test statistic* is the **difference in means** between area in the benign and malignant tumor samples.
 
@@ -163,7 +160,8 @@ Therefore, the results suggest that **all** malignant breast cancer cells have l
 This means that average cell size could potentially serve as a potential quantitative metric for the rapid and automated classification of tumor malignancy.
 
 ## References
-“Normal and Cancer Cells Structure: Image Details.” NCI Visuals Online, National Cancer Institute, (2001).  visualsonline.cancer.gov/details.cfm?imageid=2512. 
+
+“Normal and Cancer Cells Structure: Image Details.” NCI Visuals Online, National Cancer Institute, (2001). visualsonline.cancer.gov/details.cfm?imageid=2512.
 
 Street, W.N., Wolberg, W.H., & Mangasarian, O.L. “Nuclear feature extraction for breast tumor diagnosis.” (1993) Proc. SPIE 1905: Biomedical Image Processing and Biomedical Visualization. https://doi.org/10.1117/12.148698
 
