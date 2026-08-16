@@ -17,7 +17,7 @@ about:
       text: Email
       href: mailto:rmmj2023@mymail.pomona.edu
     - text: CV
-      href: https://drive.google.com/file/d/155R5WJJNO8Rm6Hp7UCHl_QpF9vNbZx2U/view?usp=sharing
+      href: https://drive.google.com/file/d/1eVjBtLmJhtEMT1Nj_Sz-Gf2UrS7N1OgY/view?usp=sharing
 ---
 
 # Ryan Mooney
